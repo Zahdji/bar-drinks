@@ -357,6 +357,13 @@ export default function App() {
             >
               <View style={styles.cardHeader}>
                 <View style={styles.cardTitleGroup}>
+                  {item.category?.trim() ? (
+                    <View style={styles.cardCategoryBadge}>
+                      <Text style={styles.cardCategoryText}>
+                        {item.category.trim().toUpperCase()}
+                      </Text>
+                    </View>
+                  ) : null}
                   <Text style={styles.cardTitle}>{item.name}</Text>
                   {(item.glass?.trim() || item.ice?.trim()) ? (
                     <View style={styles.cardMetaRow}>
@@ -423,13 +430,13 @@ export default function App() {
               {/* Modal Top Bar */}
               <View style={styles.modalHeader}>
                 <View style={styles.modalTitleGroup}>
-                  {selectedCocktail.category && (
+                  {selectedCocktail.category?.trim() ? (
                     <View style={styles.categoryBadge}>
                       <Text style={styles.categoryText}>
-                        {selectedCocktail.category.toUpperCase()}
+                        {selectedCocktail.category.trim().toUpperCase()}
                       </Text>
                     </View>
-                  )}
+                  ) : null}
                   <Text style={styles.modalTitle}>{selectedCocktail.name}</Text>
                   {(selectedCocktail.glass?.trim() || selectedCocktail.ice?.trim()) ? (
                     <View style={styles.modalMetaRow}>
@@ -952,6 +959,22 @@ const styles = StyleSheet.create({
   },
   cardTitleGroup: {
     flex: 1,
+  },
+  cardCategoryBadge: {
+    alignSelf: 'flex-start',
+    backgroundColor: '#332F00',
+    borderWidth: 1,
+    borderColor: '#FFE600',
+    paddingHorizontal: 7,
+    paddingVertical: 2,
+    borderRadius: 4,
+    marginBottom: 4,
+  },
+  cardCategoryText: {
+    fontSize: 10,
+    fontWeight: '900',
+    color: '#FFE600',
+    letterSpacing: 0.8,
   },
   cardTitle: {
     fontSize: 22,
