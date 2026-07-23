@@ -7,6 +7,7 @@
     <title>Gong High's Grog Guide</title>
     <meta name="theme-color" content="#0d0d0f" />
     <meta name="description" content="Gong High's Grog Guide - Bar Cocktail Specifications" />
+    <link rel="stylesheet" href="/globals.css" />
     <style>
       html, body, #root {
         width: 100%;
@@ -22,32 +23,21 @@
         color: #ffffff;
       }
 
-      /* Translucent Glass Styling for Cards & Search Bar */
-      [data-glass-card="true"] {
-        background-color: rgba(255, 255, 255, 0.05) !important;
-        backdrop-filter: blur(12px) !important;
-        -webkit-backdrop-filter: blur(12px) !important;
-        border: 1px solid rgba(255, 255, 255, 0.12) !important;
-        border-radius: 8px !important;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2) !important;
-      }
-
-      [data-glass-search="true"] {
-        background-color: rgba(255, 255, 255, 0.05) !important;
-        backdrop-filter: blur(12px) !important;
-        -webkit-backdrop-filter: blur(12px) !important;
-        border: 1px solid rgba(255, 255, 255, 0.12) !important;
-        border-radius: 8px !important;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2) !important;
-      }
-
-      [data-glass-modal="true"] {
-        background-color: rgba(18, 18, 22, 0.85) !important;
+      .glass-card, [data-glass-card="true"] {
+        background-color: rgba(255, 255, 255, 0.04) !important;
         backdrop-filter: blur(16px) !important;
         -webkit-backdrop-filter: blur(16px) !important;
-        border: 1px solid rgba(255, 255, 255, 0.15) !important;
-        border-radius: 8px !important;
-        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        border-radius: 6px !important;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
+      }
+
+      .glass-input, [data-glass-search="true"] {
+        background-color: rgba(255, 255, 255, 0.05) !important;
+        backdrop-filter: blur(12px) !important;
+        -webkit-backdrop-filter: blur(12px) !important;
+        border: 1px solid rgba(255, 255, 255, 0.12) !important;
+        border-radius: 6px !important;
       }
     </style>
   </head>

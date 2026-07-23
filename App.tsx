@@ -58,33 +58,18 @@ const getCategoryStyle = (category?: string) => {
 };
 
 const inlineGlassCard: any = {
-  backgroundColor: 'rgba(255, 255, 255, 0.05)',
-  backdropFilter: 'blur(12px)',
-  WebkitBackdropFilter: 'blur(12px)',
-  borderWidth: 1,
-  borderColor: 'rgba(255, 255, 255, 0.12)',
-  borderRadius: 8,
-  boxShadow: '0 4px 16px rgba(0, 0, 0, 0.2)',
+  backdropFilter: 'blur(16px)',
+  WebkitBackdropFilter: 'blur(16px)',
 };
 
 const inlineGlassSearch: any = {
-  backgroundColor: 'rgba(255, 255, 255, 0.05)',
   backdropFilter: 'blur(12px)',
   WebkitBackdropFilter: 'blur(12px)',
-  borderWidth: 1,
-  borderColor: 'rgba(255, 255, 255, 0.12)',
-  borderRadius: 8,
-  boxShadow: '0 4px 16px rgba(0, 0, 0, 0.2)',
 };
 
 const inlineGlassModal: any = {
-  backgroundColor: 'rgba(18, 18, 22, 0.85)',
-  backdropFilter: 'blur(20px)',
-  WebkitBackdropFilter: 'blur(20px)',
-  borderWidth: 1,
-  borderColor: 'rgba(255, 255, 255, 0.15)',
-  borderRadius: 6,
-  boxShadow: '0 16px 40px 0 rgba(0, 0, 0, 0.5)',
+  backdropFilter: 'blur(16px)',
+  WebkitBackdropFilter: 'blur(16px)',
 };
 
 export default function App() {
@@ -355,7 +340,7 @@ export default function App() {
         </View>
 
         {/* Prominent Search Input */}
-        <View style={[styles.searchContainer, inlineGlassSearch]} {...({ dataSet: { glassSearch: 'true' } } as any)}>
+        <View style={[styles.searchContainer, inlineGlassSearch]} {...({ className: 'glass-input', dataSet: { glassSearch: 'true' } } as any)}>
           <Text style={styles.searchIcon}>🔍</Text>
           <TextInput
             ref={inputRef}
@@ -410,7 +395,7 @@ export default function App() {
           renderItem={({ item }) => (
             <TouchableOpacity
               style={[styles.card, inlineGlassCard]}
-              {...({ dataSet: { glassCard: 'true' } } as any)}
+              {...({ className: 'glass-card', dataSet: { glassCard: 'true' } } as any)}
               activeOpacity={0.8}
               onPress={() => {
                 Keyboard.dismiss();
@@ -495,7 +480,7 @@ export default function App() {
 
             <View
               style={[styles.modalContent, inlineGlassModal, { borderTopWidth: 4, borderColor: '#FFE600' }]}
-              {...({ dataSet: { glassModal: 'true' } } as any)}
+              {...({ className: 'glass-card', dataSet: { glassModal: 'true' } } as any)}
             >
               {/* Modal Top Bar */}
               <View style={styles.modalHeader}>
@@ -541,7 +526,7 @@ export default function App() {
                 <View style={styles.section}>
                   <Text style={styles.sectionHeader}>INGREDIENTS</Text>
                   {selectedCocktail.ingredients.map((ing, idx) => (
-                    <View key={idx} style={styles.recipeRow}>
+                    <View key={idx} style={[styles.recipeRow, inlineGlassCard]} {...({ className: 'glass-card' } as any)}>
                       <Text style={styles.recipeIngName}>{ing.name}</Text>
                       <Text style={styles.recipeIngAmount}>{ing.amount}</Text>
                     </View>
@@ -552,7 +537,7 @@ export default function App() {
                 {selectedCocktail.method ? (
                   <View style={styles.section}>
                     <Text style={styles.sectionHeader}>PREPARATION METHOD</Text>
-                    <View style={styles.methodBox}>
+                    <View style={[styles.methodBox, inlineGlassCard]} {...({ className: 'glass-card' } as any)}>
                       <Text style={styles.methodText}>{selectedCocktail.method}</Text>
                     </View>
                   </View>
