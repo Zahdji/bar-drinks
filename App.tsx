@@ -29,7 +29,6 @@ import {
 export default function App() {
   const [recipesList, setRecipesList] = useState<Cocktail[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [selectedCocktail, setSelectedCocktail] = useState<Cocktail | null>(null);
   
   // Loading & Supabase status
@@ -83,21 +82,9 @@ export default function App() {
     return () => clearTimeout(timer);
   }, []);
 
-  const quickFilters = ['All', 'Bourbon', 'Gin', 'Tequila', 'Rum', 'Vodka', 'Whiskey'];
-
-  // Filter recipes by query & spirit
+  // Filter recipes live by name, ingredient, glass, or ice
   const filteredRecipes = recipesList.filter((recipe) => {
     const q = searchQuery.toLowerCase().trim();
-
-    let matchesCategory = true;
-    if (selectedCategory !== 'All') {
-      const catLower = selectedCategory.toLowerCase();
-      matchesCategory = recipe.ingredients.some((ing) =>
-        ing.name.toLowerCase().includes(catLower)
-      );
-    }
-
-    if (!matchesCategory) return false;
     if (!q) return true;
 
     const matchesName = recipe.name.toLowerCase().includes(q);
@@ -325,29 +312,6 @@ export default function App() {
             </TouchableOpacity>
           )}
         </View>
-
-        {/* Quick Spirit Selector Badges */}
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={styles.filterScroll}
-          contentContainerStyle={styles.filterContainer}
-        >
-          {quickFilters.map((filter) => {
-            const isActive = selectedCategory === filter;
-            return (
-              <TouchableOpacity
-                key={filter}
-                onPress={() => setSelectedCategory(filter)}
-                style={[styles.filterChip, isActive && styles.filterChipActive]}
-              >
-                <Text style={[styles.filterChipText, isActive && styles.filterChipTextActive]}>
-                  {filter.toUpperCase()}
-                </Text>
-              </TouchableOpacity>
-            );
-          })}
-        </ScrollView>
       </View>
 
       {/* Drinks List */}
@@ -370,10 +334,7 @@ export default function App() {
                 No cocktail matches "{searchQuery}". Try searching another ingredient or spirit.
               </Text>
               <TouchableOpacity
-                onPress={() => {
-                  setSearchQuery('');
-                  setSelectedCategory('All');
-                }}
+                onPress={() => setSearchQuery('')}
                 style={styles.resetButton}
               >
                 <Text style={styles.resetButtonText}>RESET SEARCH</Text>
@@ -872,8 +833,8 @@ const styles = StyleSheet.create({
     borderColor: '#333333',
     borderRadius: 12,
     paddingHorizontal: 12,
-    height: 50,
-    marginBottom: 10,
+    height: 52,
+    marginBottom: 4,
   },
   searchIcon: {
     fontSize: 18,
