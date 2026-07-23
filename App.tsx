@@ -47,6 +47,7 @@ export default function App() {
 
   const [editingRecipeId, setEditingRecipeId] = useState<string | null>(null);
   const [formName, setFormName] = useState('');
+  const [formCategory, setFormCategory] = useState('');
   const [formGlass, setFormGlass] = useState('');
   const [formIce, setFormIce] = useState('');
   const [formGarnish, setFormGarnish] = useState('');
@@ -88,6 +89,7 @@ export default function App() {
     if (!q) return true;
 
     const matchesName = recipe.name.toLowerCase().includes(q);
+    const matchesCategory = (recipe.category || '').toLowerCase().includes(q);
     const matchesIngredient = recipe.ingredients.some(
       (ing) =>
         ing.name.toLowerCase().includes(q) || ing.amount.toLowerCase().includes(q)
@@ -95,7 +97,7 @@ export default function App() {
     const matchesGlass = (recipe.glass || '').toLowerCase().includes(q);
     const matchesIce = (recipe.ice || '').toLowerCase().includes(q);
 
-    return matchesName || matchesIngredient || matchesGlass || matchesIce;
+    return matchesName || matchesCategory || matchesIngredient || matchesGlass || matchesIce;
   });
 
   const isIngredientMatch = (ingName: string) => {
@@ -131,6 +133,7 @@ export default function App() {
     if (cocktail) {
       setEditingRecipeId(cocktail.id);
       setFormName(cocktail.name);
+      setFormCategory(cocktail.category || '');
       setFormGlass(cocktail.glass || '');
       setFormIce(cocktail.ice || '');
       setFormGarnish(cocktail.garnish || '');
@@ -143,6 +146,7 @@ export default function App() {
     } else {
       setEditingRecipeId(null);
       setFormName('');
+      setFormCategory('');
       setFormGlass('');
       setFormIce('');
       setFormGarnish('');
@@ -186,6 +190,7 @@ export default function App() {
     setSaving(true);
     const payload = {
       name: formName.trim(),
+      category: formCategory.trim(),
       glass: formGlass.trim(),
       ice: formIce.trim(),
       ingredients: cleanIngredients,
@@ -547,6 +552,35 @@ export default function App() {
                     placeholder="e.g. Espresso Martini"
                     placeholderTextColor="#666666"
                   />
+                </View>
+
+                <View style={styles.formGroup}>
+                  <Text style={styles.formLabel}>CATEGORY</Text>
+                  <View style={styles.categoryPickerRow}>
+                    {['None', 'Stirred', 'Shaken', 'Bomb', 'Shot'].map((cat) => {
+                      const valueToSave = cat === 'None' ? '' : cat;
+                      const isSelected = formCategory === valueToSave;
+                      return (
+                        <TouchableOpacity
+                          key={cat}
+                          onPress={() => setFormCategory(valueToSave)}
+                          style={[
+                            styles.categoryPickerOption,
+                            isSelected && styles.categoryPickerOptionSelected
+                          ]}
+                        >
+                          <Text
+                            style={[
+                              styles.categoryPickerText,
+                              isSelected && styles.categoryPickerTextSelected
+                            ]}
+                          >
+                            {cat.toUpperCase()}
+                          </Text>
+                        </TouchableOpacity>
+                      );
+                    })}
+                  </View>
                 </View>
 
                 <View style={styles.formRow}>
@@ -1420,6 +1454,34 @@ const styles = StyleSheet.create({
     fontWeight: '900',
     color: '#000000',
     letterSpacing: 0.5,
+  },
+  categoryPickerRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginTop: 4,
+  },
+  categoryPickerOption: {
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 8,
+    backgroundColor: '#222222',
+    borderWidth: 1,
+    borderColor: '#333333',
+  },
+  categoryPickerOptionSelected: {
+    backgroundColor: '#FFE600',
+    borderColor: '#FFE600',
+  },
+  categoryPickerText: {
+    fontSize: 11,
+    fontWeight: '800',
+    color: '#888888',
+    letterSpacing: 0.5,
+  },
+  categoryPickerTextSelected: {
+    color: '#000000',
+    fontWeight: '900',
   },
 });
 
