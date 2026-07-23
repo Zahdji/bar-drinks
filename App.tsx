@@ -59,22 +59,22 @@ const getCategoryStyle = (category?: string) => {
 
 const inlineGlassCard: any = {
   backgroundColor: 'rgba(255, 255, 255, 0.05)',
-  backdropFilter: 'blur(16px)',
-  WebkitBackdropFilter: 'blur(16px)',
+  backdropFilter: 'blur(12px)',
+  WebkitBackdropFilter: 'blur(12px)',
   borderWidth: 1,
-  borderColor: 'rgba(255, 255, 255, 0.15)',
-  borderRadius: 6,
-  boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.37)',
+  borderColor: 'rgba(255, 255, 255, 0.12)',
+  borderRadius: 8,
+  boxShadow: '0 4px 16px rgba(0, 0, 0, 0.2)',
 };
 
 const inlineGlassSearch: any = {
-  backgroundColor: 'rgba(255, 255, 255, 0.06)',
-  backdropFilter: 'blur(16px)',
-  WebkitBackdropFilter: 'blur(16px)',
+  backgroundColor: 'rgba(255, 255, 255, 0.05)',
+  backdropFilter: 'blur(12px)',
+  WebkitBackdropFilter: 'blur(12px)',
   borderWidth: 1,
-  borderColor: 'rgba(255, 255, 255, 0.18)',
-  borderRadius: 6,
-  boxShadow: '0 4px 20px 0 rgba(0, 0, 0, 0.3)',
+  borderColor: 'rgba(255, 255, 255, 0.12)',
+  borderRadius: 8,
+  boxShadow: '0 4px 16px rgba(0, 0, 0, 0.2)',
 };
 
 const inlineGlassModal: any = {

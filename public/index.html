@@ -22,32 +22,32 @@
         color: #ffffff;
       }
 
-      /* Force Translucent Glassmorphism on Cocktail Cards & Containers */
+      /* Translucent Glass Styling for Cards & Search Bar */
       [data-glass-card="true"] {
-        background-color: rgba(255, 255, 255, 0.06) !important;
+        background-color: rgba(255, 255, 255, 0.05) !important;
         backdrop-filter: blur(12px) !important;
         -webkit-backdrop-filter: blur(12px) !important;
         border: 1px solid rgba(255, 255, 255, 0.12) !important;
-        border-radius: 6px !important;
+        border-radius: 8px !important;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2) !important;
+      }
+
+      [data-glass-search="true"] {
+        background-color: rgba(255, 255, 255, 0.05) !important;
+        backdrop-filter: blur(12px) !important;
+        -webkit-backdrop-filter: blur(12px) !important;
+        border: 1px solid rgba(255, 255, 255, 0.12) !important;
+        border-radius: 8px !important;
         box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2) !important;
       }
 
       [data-glass-modal="true"] {
-        background-color: rgba(18, 18, 22, 0.75) !important;
+        background-color: rgba(18, 18, 22, 0.85) !important;
         backdrop-filter: blur(16px) !important;
         -webkit-backdrop-filter: blur(16px) !important;
         border: 1px solid rgba(255, 255, 255, 0.15) !important;
-        border-radius: 6px !important;
+        border-radius: 8px !important;
         box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5) !important;
-      }
-
-      [data-glass-search="true"] {
-        background-color: rgba(255, 255, 255, 0.06) !important;
-        backdrop-filter: blur(12px) !important;
-        -webkit-backdrop-filter: blur(12px) !important;
-        border: 1px solid rgba(255, 255, 255, 0.18) !important;
-        border-radius: 6px !important;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2) !important;
       }
     </style>
   </head>
