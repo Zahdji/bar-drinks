@@ -357,14 +357,16 @@ export default function App() {
             >
               <View style={styles.cardHeader}>
                 <View style={styles.cardTitleGroup}>
-                  {item.category?.trim() ? (
-                    <View style={styles.cardCategoryBadge}>
-                      <Text style={styles.cardCategoryText}>
-                        {item.category.trim().toUpperCase()}
-                      </Text>
-                    </View>
-                  ) : null}
-                  <Text style={styles.cardTitle}>{item.name}</Text>
+                  <View style={styles.cardTopRow}>
+                    <Text style={styles.cardTitle}>{item.name}</Text>
+                    {item.category?.trim() ? (
+                      <View style={styles.cardCategoryBadge}>
+                        <Text style={styles.cardCategoryText}>
+                          {item.category.trim().toUpperCase()}
+                        </Text>
+                      </View>
+                    ) : null}
+                  </View>
                   {(item.glass?.trim() || item.ice?.trim()) ? (
                     <View style={styles.cardMetaRow}>
                       {item.glass?.trim() ? (
@@ -960,15 +962,20 @@ const styles = StyleSheet.create({
   cardTitleGroup: {
     flex: 1,
   },
+  cardTopRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginBottom: 4,
+  },
   cardCategoryBadge: {
-    alignSelf: 'flex-start',
     backgroundColor: '#332F00',
     borderWidth: 1,
     borderColor: '#FFE600',
-    paddingHorizontal: 7,
-    paddingVertical: 2,
-    borderRadius: 4,
-    marginBottom: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
   },
   cardCategoryText: {
     fontSize: 10,
@@ -980,7 +987,6 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: '900',
     color: '#FFFFFF',
-    marginBottom: 4,
   },
   cardMetaRow: {
     flexDirection: 'row',
