@@ -27,7 +27,7 @@ import {
 } from './recipes';
 
 export default function App() {
-  const [recipesList, setRecipesList] = useState<Cocktail[]>(initialRecipes);
+  const [recipesList, setRecipesList] = useState<Cocktail[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [selectedCocktail, setSelectedCocktail] = useState<Cocktail | null>(null);
@@ -59,14 +59,14 @@ export default function App() {
 
   const inputRef = useRef<TextInput>(null);
 
-  // Load recipes from Supabase on mount
   const loadRecipes = async () => {
     setLoading(true);
     const { data, error } = await fetchRecipesFromSupabase();
-    if (data && data.length > 0) {
+    if (data) {
       setRecipesList(data);
-      setIsCloudConnected(true);
+      setIsCloudConnected(!error);
     } else {
+      setRecipesList([]);
       setIsCloudConnected(!error);
     }
     setLoading(false);
