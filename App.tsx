@@ -73,6 +73,9 @@ export default function App() {
   };
 
   useEffect(() => {
+    if (typeof document !== 'undefined') {
+      document.title = "Gong High's Grog Guide";
+    }
     loadRecipes();
     const timer = setTimeout(() => {
       inputRef.current?.focus();
@@ -270,8 +273,10 @@ export default function App() {
           <View style={styles.logoBadge}>
             <Text style={styles.logoEmoji}>🍸</Text>
           </View>
-          <View>
-            <Text style={styles.appTitle}>BAR DOCKET</Text>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.appTitle} numberOfLines={1} adjustsFontSizeToFit>
+              Gong High's Grog Guide
+            </Text>
             <View style={styles.cloudSyncRow}>
               <View
                 style={[
@@ -825,7 +830,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   appTitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '900',
     color: '#FFFFFF',
     letterSpacing: 0.5,
