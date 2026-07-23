@@ -302,8 +302,8 @@ export default function App() {
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView style={{ flex: 1, backgroundColor: '#121212', paddingHorizontal: 16 }}>
-        <StatusBar style="light" backgroundColor="#121212" />
+      <SafeAreaView style={{ flex: 1, backgroundColor: 'transparent', paddingHorizontal: 16 }}>
+        <StatusBar style="light" backgroundColor="transparent" />
 
         {/* Header Bar */}
       <View style={styles.header}>
@@ -864,7 +864,7 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#121212',
+    backgroundColor: 'transparent',
   },
   header: {
     paddingHorizontal: 16,
