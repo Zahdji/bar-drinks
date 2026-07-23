@@ -26,6 +26,37 @@ import {
   fetchAdminPasscodeFromSupabase
 } from './recipes';
 
+const getCategoryStyle = (category?: string) => {
+  const cat = (category || '').toLowerCase().trim();
+  switch (cat) {
+    case 'stirred':
+      return {
+        badgeStyle: { backgroundColor: 'rgba(255, 170, 0, 0.18)', borderColor: '#FFAA00' },
+        textStyle: { color: '#FFAA00' }
+      };
+    case 'shaken':
+      return {
+        badgeStyle: { backgroundColor: 'rgba(0, 240, 255, 0.18)', borderColor: '#00F0FF' },
+        textStyle: { color: '#00F0FF' }
+      };
+    case 'bomb':
+      return {
+        badgeStyle: { backgroundColor: 'rgba(255, 51, 85, 0.18)', borderColor: '#FF3355' },
+        textStyle: { color: '#FF3355' }
+      };
+    case 'shot':
+      return {
+        badgeStyle: { backgroundColor: 'rgba(215, 75, 255, 0.18)', borderColor: '#D74BFF' },
+        textStyle: { color: '#D74BFF' }
+      };
+    default:
+      return {
+        badgeStyle: { backgroundColor: '#262626', borderColor: '#444444' },
+        textStyle: { color: '#888888' }
+      };
+  }
+};
+
 export default function App() {
   const [recipesList, setRecipesList] = useState<Cocktail[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -359,13 +390,16 @@ export default function App() {
                 <View style={styles.cardTitleGroup}>
                   <View style={styles.cardTopRow}>
                     <Text style={styles.cardTitle}>{item.name}</Text>
-                    {item.category?.trim() ? (
-                      <View style={styles.cardCategoryBadge}>
-                        <Text style={styles.cardCategoryText}>
-                          {item.category.trim().toUpperCase()}
-                        </Text>
-                      </View>
-                    ) : null}
+                    {item.category?.trim() ? (() => {
+                      const catTheme = getCategoryStyle(item.category);
+                      return (
+                        <View style={[styles.cardCategoryBadge, catTheme.badgeStyle]}>
+                          <Text style={[styles.cardCategoryText, catTheme.textStyle]}>
+                            {item.category.trim().toUpperCase()}
+                          </Text>
+                        </View>
+                      );
+                    })() : null}
                   </View>
                   {(item.glass?.trim() || item.ice?.trim()) ? (
                     <View style={styles.cardMetaRow}>
@@ -432,13 +466,16 @@ export default function App() {
               {/* Modal Top Bar */}
               <View style={styles.modalHeader}>
                 <View style={styles.modalTitleGroup}>
-                  {selectedCocktail.category?.trim() ? (
-                    <View style={styles.categoryBadge}>
-                      <Text style={styles.categoryText}>
-                        {selectedCocktail.category.trim().toUpperCase()}
-                      </Text>
-                    </View>
-                  ) : null}
+                  {selectedCocktail.category?.trim() ? (() => {
+                    const catTheme = getCategoryStyle(selectedCocktail.category);
+                    return (
+                      <View style={[styles.categoryBadge, catTheme.badgeStyle]}>
+                        <Text style={[styles.categoryText, catTheme.textStyle]}>
+                          {selectedCocktail.category.trim().toUpperCase()}
+                        </Text>
+                      </View>
+                    );
+                  })() : null}
                   <Text style={styles.modalTitle}>{selectedCocktail.name}</Text>
                   {(selectedCocktail.glass?.trim() || selectedCocktail.ice?.trim()) ? (
                     <View style={styles.modalMetaRow}>
@@ -569,19 +606,20 @@ export default function App() {
                     {['None', 'Stirred', 'Shaken', 'Bomb', 'Shot'].map((cat) => {
                       const valueToSave = cat === 'None' ? '' : cat;
                       const isSelected = formCategory === valueToSave;
+                      const catTheme = getCategoryStyle(valueToSave);
                       return (
                         <TouchableOpacity
                           key={cat}
                           onPress={() => setFormCategory(valueToSave)}
                           style={[
                             styles.categoryPickerOption,
-                            isSelected && styles.categoryPickerOptionSelected
+                            isSelected && (valueToSave ? catTheme.badgeStyle : styles.categoryPickerOptionSelected)
                           ]}
                         >
                           <Text
                             style={[
                               styles.categoryPickerText,
-                              isSelected && styles.categoryPickerTextSelected
+                              isSelected && (valueToSave ? catTheme.textStyle : styles.categoryPickerTextSelected)
                             ]}
                           >
                             {cat.toUpperCase()}
