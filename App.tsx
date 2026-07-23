@@ -51,10 +51,40 @@ const getCategoryStyle = (category?: string) => {
       };
     default:
       return {
-        badgeStyle: { backgroundColor: '#262626', borderColor: '#444444' },
+        badgeStyle: { backgroundColor: 'rgba(255, 255, 255, 0.05)', borderColor: 'rgba(255, 255, 255, 0.15)' },
         textStyle: { color: '#888888' }
       };
   }
+};
+
+const inlineGlassCard: any = {
+  backgroundColor: 'rgba(255, 255, 255, 0.05)',
+  backdropFilter: 'blur(16px)',
+  WebkitBackdropFilter: 'blur(16px)',
+  borderWidth: 1,
+  borderColor: 'rgba(255, 255, 255, 0.15)',
+  borderRadius: 6,
+  boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.37)',
+};
+
+const inlineGlassSearch: any = {
+  backgroundColor: 'rgba(255, 255, 255, 0.06)',
+  backdropFilter: 'blur(16px)',
+  WebkitBackdropFilter: 'blur(16px)',
+  borderWidth: 1,
+  borderColor: 'rgba(255, 255, 255, 0.18)',
+  borderRadius: 6,
+  boxShadow: '0 4px 20px 0 rgba(0, 0, 0, 0.3)',
+};
+
+const inlineGlassModal: any = {
+  backgroundColor: 'rgba(18, 18, 22, 0.85)',
+  backdropFilter: 'blur(20px)',
+  WebkitBackdropFilter: 'blur(20px)',
+  borderWidth: 1,
+  borderColor: 'rgba(255, 255, 255, 0.15)',
+  borderRadius: 6,
+  boxShadow: '0 16px 40px 0 rgba(0, 0, 0, 0.5)',
 };
 
 export default function App() {
@@ -325,7 +355,7 @@ export default function App() {
         </View>
 
         {/* Prominent Search Input */}
-        <View style={styles.searchContainer}>
+        <View style={[styles.searchContainer, inlineGlassSearch]}>
           <Text style={styles.searchIcon}>🔍</Text>
           <TextInput
             ref={inputRef}
@@ -379,7 +409,7 @@ export default function App() {
           }
           renderItem={({ item }) => (
             <TouchableOpacity
-              style={styles.card}
+              style={[styles.card, inlineGlassCard]}
               activeOpacity={0.8}
               onPress={() => {
                 Keyboard.dismiss();
@@ -462,7 +492,7 @@ export default function App() {
           <View style={styles.modalOverlay}>
             <Pressable style={styles.backdrop} onPress={() => setSelectedCocktail(null)} />
 
-            <View style={styles.modalContent}>
+            <View style={[styles.modalContent, inlineGlassModal, { borderTopWidth: 4, borderColor: '#FFE600' }]}>
               {/* Modal Top Bar */}
               <View style={styles.modalHeader}>
                 <View style={styles.modalTitleGroup}>
@@ -909,10 +939,6 @@ const styles = StyleSheet.create({
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(28, 28, 30, 0.85)',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.15)',
-    borderRadius: 8,
     paddingHorizontal: 12,
     height: 52,
     marginBottom: 4,
@@ -950,10 +976,10 @@ const styles = StyleSheet.create({
   filterChip: {
     paddingHorizontal: 14,
     paddingVertical: 7,
-    borderRadius: 8,
-    backgroundColor: '#1E1E1E',
+    borderRadius: 6,
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
     borderWidth: 1,
-    borderColor: '#2E2E2E',
+    borderColor: 'rgba(255, 255, 255, 0.15)',
   },
   filterChipActive: {
     backgroundColor: '#FFE600',
@@ -985,10 +1011,6 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   card: {
-    backgroundColor: 'rgba(26, 26, 28, 0.80)',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.12)',
-    borderRadius: 8,
     padding: 16,
   },
   cardHeader: {
@@ -1008,12 +1030,10 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   cardCategoryBadge: {
-    backgroundColor: '#332F00',
-    borderWidth: 1,
-    borderColor: '#FFE600',
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: 6,
+    borderWidth: 1,
   },
   cardCategoryText: {
     fontSize: 10,
@@ -1046,7 +1066,9 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   cardEditBtn: {
-    backgroundColor: '#333333',
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.15)',
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 6,
@@ -1069,9 +1091,9 @@ const styles = StyleSheet.create({
   ingPill: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(20, 20, 22, 0.85)',
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.10)',
+    borderColor: 'rgba(255, 255, 255, 0.12)',
     borderRadius: 6,
     paddingHorizontal: 8,
     paddingVertical: 4,
@@ -1121,7 +1143,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFE600',
     paddingHorizontal: 20,
     paddingVertical: 10,
-    borderRadius: 10,
+    borderRadius: 6,
   },
   resetButtonText: {
     color: '#000000',
@@ -1132,18 +1154,13 @@ const styles = StyleSheet.create({
   /* MODAL OVERLAY STYLES */
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.85)',
+    backgroundColor: 'rgba(0, 0, 0, 0.75)',
     justifyContent: 'flex-end',
   },
   backdrop: {
     ...StyleSheet.absoluteFillObject,
   },
   modalContent: {
-    backgroundColor: 'rgba(20, 20, 22, 0.95)',
-    borderTopLeftRadius: 8,
-    borderTopRightRadius: 8,
-    borderTopWidth: 4,
-    borderColor: '#FFE600',
     maxHeight: '90%',
     flexDirection: 'column',
   },
@@ -1154,9 +1171,9 @@ const styles = StyleSheet.create({
     padding: 20,
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(255, 255, 255, 0.12)',
-    backgroundColor: 'rgba(30, 30, 32, 0.90)',
-    borderTopLeftRadius: 8,
-    borderTopRightRadius: 8,
+    backgroundColor: 'rgba(25, 25, 28, 0.90)',
+    borderTopLeftRadius: 6,
+    borderTopRightRadius: 6,
   },
   modalTitleGroup: {
     flex: 1,
@@ -1164,12 +1181,10 @@ const styles = StyleSheet.create({
   },
   categoryBadge: {
     alignSelf: 'flex-start',
-    backgroundColor: '#332F00',
-    borderWidth: 1,
-    borderColor: '#FFE600',
     paddingHorizontal: 8,
     paddingVertical: 2,
-    borderRadius: 4,
+    borderRadius: 6,
+    borderWidth: 1,
     marginBottom: 6,
   },
   categoryText: {
@@ -1228,17 +1243,17 @@ const styles = StyleSheet.create({
     color: '#FFE600',
     letterSpacing: 1.5,
     borderBottomWidth: 1,
-    borderBottomColor: '#333333',
+    borderBottomColor: 'rgba(255, 255, 255, 0.12)',
     paddingBottom: 4,
   },
   recipeRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: 'rgba(30, 30, 32, 0.70)',
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.12)',
-    borderRadius: 8,
+    borderColor: 'rgba(255, 255, 255, 0.15)',
+    borderRadius: 6,
     padding: 14,
   },
   recipeIngName: {
@@ -1254,10 +1269,10 @@ const styles = StyleSheet.create({
     marginLeft: 12,
   },
   methodBox: {
-    backgroundColor: 'rgba(30, 30, 32, 0.70)',
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.12)',
-    borderRadius: 8,
+    borderColor: 'rgba(255, 255, 255, 0.15)',
+    borderRadius: 6,
     padding: 16,
   },
   methodText: {
@@ -1267,10 +1282,10 @@ const styles = StyleSheet.create({
     lineHeight: 28,
   },
   garnishBox: {
-    backgroundColor: 'rgba(38, 34, 0, 0.85)',
+    backgroundColor: 'rgba(38, 34, 0, 0.65)',
     borderWidth: 1,
     borderColor: '#FFE600',
-    borderRadius: 8,
+    borderRadius: 6,
     padding: 16,
   },
   garnishText: {
@@ -1281,18 +1296,18 @@ const styles = StyleSheet.create({
   modalFooter: {
     padding: 16,
     borderTopWidth: 1,
-    borderTopColor: '#333333',
-    backgroundColor: '#222222',
+    borderTopColor: 'rgba(255, 255, 255, 0.12)',
+    backgroundColor: 'rgba(20, 20, 24, 0.90)',
     flexDirection: 'row',
     gap: 12,
   },
   modalEditBtn: {
     flex: 1,
-    backgroundColor: 'rgba(45, 45, 48, 0.9)',
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.12)',
+    borderColor: 'rgba(255, 255, 255, 0.15)',
     paddingVertical: 14,
-    borderRadius: 8,
+    borderRadius: 6,
     alignItems: 'center',
   },
   modalEditBtnText: {
@@ -1302,11 +1317,11 @@ const styles = StyleSheet.create({
   },
   modalDeleteBtn: {
     flex: 1,
-    backgroundColor: 'rgba(51, 17, 17, 0.9)',
+    backgroundColor: 'rgba(51, 17, 17, 0.7)',
     borderWidth: 1,
     borderColor: '#FF4444',
     paddingVertical: 14,
-    borderRadius: 8,
+    borderRadius: 6,
     alignItems: 'center',
   },
   modalDeleteBtnText: {
@@ -1321,11 +1336,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 20,
-    backgroundColor: '#222222',
+    backgroundColor: 'rgba(25, 25, 28, 0.90)',
     borderBottomWidth: 1,
-    borderBottomColor: '#333333',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
+    borderBottomColor: 'rgba(255, 255, 255, 0.12)',
+    borderTopLeftRadius: 6,
+    borderTopRightRadius: 6,
   },
   adminTitle: {
     fontSize: 20,
@@ -1354,10 +1369,10 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
   },
   formInput: {
-    backgroundColor: 'rgba(30, 30, 32, 0.85)',
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.15)',
-    borderRadius: 8,
+    borderRadius: 6,
     paddingHorizontal: 12,
     paddingVertical: 10,
     color: '#FFFFFF',
@@ -1375,7 +1390,9 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   addIngBtn: {
-    backgroundColor: '#333333',
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.12)',
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 6,
@@ -1394,8 +1411,8 @@ const styles = StyleSheet.create({
   removeIngBtn: {
     width: 36,
     height: 36,
-    borderRadius: 8,
-    backgroundColor: '#331111',
+    borderRadius: 6,
+    backgroundColor: 'rgba(51, 17, 17, 0.8)',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -1407,7 +1424,7 @@ const styles = StyleSheet.create({
   saveBtn: {
     backgroundColor: '#FFE600',
     paddingVertical: 16,
-    borderRadius: 8,
+    borderRadius: 6,
     alignItems: 'center',
   },
   saveBtnText: {
@@ -1424,8 +1441,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderTopWidth: 1,
-    borderTopColor: '#1F1F1F',
-    backgroundColor: '#121212',
+    borderTopColor: 'rgba(255, 255, 255, 0.08)',
   },
   discreetLockBtn: {
     padding: 6,
@@ -1434,15 +1450,15 @@ const styles = StyleSheet.create({
   },
   discreetLockText: {
     fontSize: 14,
-    color: '#333333',
+    color: '#444444',
   },
   logoutBtn: {
-    backgroundColor: '#1E1E1E',
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
     borderWidth: 1,
-    borderColor: '#333333',
+    borderColor: 'rgba(255, 255, 255, 0.15)',
     paddingHorizontal: 14,
     paddingVertical: 6,
-    borderRadius: 8,
+    borderRadius: 6,
   },
   logoutBtnText: {
     fontSize: 12,
@@ -1453,10 +1469,9 @@ const styles = StyleSheet.create({
 
   /* LOGIN MODAL STYLES */
   loginModalContent: {
-    backgroundColor: 'rgba(24, 24, 26, 0.95)',
     marginHorizontal: 16,
     marginBottom: 40,
-    borderRadius: 8,
+    borderRadius: 6,
     borderTopWidth: 4,
     borderColor: '#FFE600',
     overflow: 'hidden',
@@ -1466,9 +1481,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 18,
-    backgroundColor: '#222222',
+    backgroundColor: 'rgba(25, 25, 28, 0.90)',
     borderBottomWidth: 1,
-    borderBottomColor: '#333333',
+    borderBottomColor: 'rgba(255, 255, 255, 0.12)',
   },
   loginTitle: {
     fontSize: 18,
@@ -1501,9 +1516,11 @@ const styles = StyleSheet.create({
   },
   loginCancelBtn: {
     flex: 1,
-    backgroundColor: '#262626',
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.15)',
     paddingVertical: 12,
-    borderRadius: 10,
+    borderRadius: 6,
     alignItems: 'center',
   },
   loginCancelBtnText: {
@@ -1515,7 +1532,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFE600',
     paddingVertical: 12,
-    borderRadius: 10,
+    borderRadius: 6,
     alignItems: 'center',
   },
   loginSubmitBtnText: {
@@ -1533,10 +1550,10 @@ const styles = StyleSheet.create({
   categoryPickerOption: {
     paddingHorizontal: 14,
     paddingVertical: 8,
-    borderRadius: 8,
-    backgroundColor: '#222222',
+    borderRadius: 6,
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
     borderWidth: 1,
-    borderColor: '#333333',
+    borderColor: 'rgba(255, 255, 255, 0.15)',
   },
   categoryPickerOptionSelected: {
     backgroundColor: '#FFE600',
