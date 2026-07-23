@@ -355,7 +355,7 @@ export default function App() {
         </View>
 
         {/* Prominent Search Input */}
-        <View style={[styles.searchContainer, inlineGlassSearch]}>
+        <View style={[styles.searchContainer, inlineGlassSearch]} {...({ dataSet: { glassSearch: 'true' } } as any)}>
           <Text style={styles.searchIcon}>🔍</Text>
           <TextInput
             ref={inputRef}
@@ -410,6 +410,7 @@ export default function App() {
           renderItem={({ item }) => (
             <TouchableOpacity
               style={[styles.card, inlineGlassCard]}
+              {...({ dataSet: { glassCard: 'true' } } as any)}
               activeOpacity={0.8}
               onPress={() => {
                 Keyboard.dismiss();
@@ -492,7 +493,10 @@ export default function App() {
           <View style={styles.modalOverlay}>
             <Pressable style={styles.backdrop} onPress={() => setSelectedCocktail(null)} />
 
-            <View style={[styles.modalContent, inlineGlassModal, { borderTopWidth: 4, borderColor: '#FFE600' }]}>
+            <View
+              style={[styles.modalContent, inlineGlassModal, { borderTopWidth: 4, borderColor: '#FFE600' }]}
+              {...({ dataSet: { glassModal: 'true' } } as any)}
+            >
               {/* Modal Top Bar */}
               <View style={styles.modalHeader}>
                 <View style={styles.modalTitleGroup}>
