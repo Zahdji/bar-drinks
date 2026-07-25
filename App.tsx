@@ -26,35 +26,153 @@ import {
   fetchAdminPasscodeFromSupabase
 } from './recipes';
 
+export type Language = 'en' | 'zh';
+
+export const i18n = {
+  en: {
+    appTitle: "Gong High's Grog Guide",
+    supabaseLive: "SUPABASE LIVE",
+    localCache: "LOCAL CACHE",
+    searchPlaceholder: "SEARCH DRINK OR INGREDIENT...",
+    addDrink: "+ ADD DRINK",
+    adminLogin: "Admin (Login)",
+    adminLogout: "Admin (Logout)",
+    syncing: "SYNCING WITH SUPABASE...",
+    noMatching: "NO MATCHING DRINKS",
+    noMatchingSub: (q: string) => `No cocktail matches "${q}". Try searching another ingredient or spirit.`,
+    resetSearch: "RESET SEARCH",
+    glass: "Glass",
+    ice: "Ice",
+    edit: "EDIT",
+    ingredients: "INGREDIENTS",
+    method: "PREPARATION METHOD",
+    garnish: "GARNISH",
+    editSpec: "✏️ EDIT SPEC",
+    delete: "🗑️ DELETE",
+    addCocktailTitle: "ADD NEW COCKTAIL",
+    editCocktailTitle: "EDIT COCKTAIL SPEC",
+    cocktailNameLabel: "COCKTAIL NAME *",
+    namePlaceholder: "e.g. Espresso Martini",
+    categoryLabel: "CATEGORY",
+    glassLabel: "GLASSWARE",
+    glassPlaceholder: "e.g. Highball, Coupette...",
+    iceLabel: "ICE TYPE",
+    icePlaceholder: "e.g. Full ice, Crushed, Cubes...",
+    garnishLabel: "GARNISH",
+    garnishPlaceholder: "e.g. Lime wedge, Mint sprig...",
+    ingredientsLabel: "INGREDIENTS & DOSAGES",
+    ingredientNameHeader: "INGREDIENT NAME",
+    amountHeader: "AMOUNT",
+    addIngredientBtn: "+ ADD INGREDIENT",
+    prepMethodLabel: "PREPARATION METHOD / INSTRUCTIONS",
+    prepMethodPlaceholder: "Detail step-by-step preparation...",
+    cancel: "CANCEL",
+    updateSupabase: "UPDATE IN SUPABASE",
+    saveSupabase: "SAVE TO SUPABASE",
+    adminAccessTitle: "🔒 ADMIN ACCESS",
+    adminAccessSub: "Enter the Admin PIN/Password to manage recipe specs.",
+    adminPinLabel: "ADMIN PIN / PASSWORD",
+    pinPlaceholder: "Enter Admin PIN...",
+    login: "LOGIN",
+    enterPinError: "Please enter the Admin PIN.",
+    incorrectPinError: "Incorrect PIN. Please try again.",
+    requiredFieldName: "Please enter a drink name.",
+    confirmDeleteTitle: "Delete Cocktail",
+    confirmDeleteMsg: (name: string) => `Are you sure you want to delete "${name}" from Supabase?`,
+    catNone: "NONE",
+    catStirred: "STIRRED",
+    catShaken: "SHAKEN",
+    catBomb: "BOMB",
+    catShot: "SHOT",
+  },
+  zh: {
+    appTitle: "Gong High 酒單指南",
+    supabaseLive: "雲端即時連線",
+    localCache: "本地快取紀錄",
+    searchPlaceholder: "搜尋酒名或原料成分...",
+    addDrink: "+ 新增酒款",
+    adminLogin: "管理員 (登入)",
+    adminLogout: "管理員 (登出)",
+    syncing: "正在與雲端同步中...",
+    noMatching: "未找到符合的調酒",
+    noMatchingSub: (q: string) => `沒有找到符合 "${q}" 的調酒。請嘗試搜尋其他原料或基酒。`,
+    resetSearch: "重設搜尋",
+    glass: "杯型",
+    ice: "冰量",
+    edit: "編輯",
+    ingredients: "配方原料",
+    method: "調製方法",
+    garnish: "裝飾物",
+    editSpec: "✏️ 編輯酒單",
+    delete: "🗑️ 刪除",
+    addCocktailTitle: "新增調酒酒單",
+    editCocktailTitle: "編輯調酒酒單",
+    cocktailNameLabel: "調酒名稱 *",
+    namePlaceholder: "例如：濃縮咖啡瑪丁尼",
+    categoryLabel: "調製分類",
+    glassLabel: "適用杯型",
+    glassPlaceholder: "例如：高球杯、可口杯...",
+    iceLabel: "冰塊類型",
+    icePlaceholder: "例如：滿冰、碎冰、去冰...",
+    garnishLabel: "裝飾裝扮",
+    garnishPlaceholder: "例如：檸檬角、薄荷葉...",
+    ingredientsLabel: "配方成分與用量",
+    ingredientNameHeader: "原料名稱",
+    amountHeader: "份量/用量",
+    addIngredientBtn: "+ 新增原料",
+    prepMethodLabel: "調製步驟說明",
+    prepMethodPlaceholder: "請詳細填寫調製步驟...",
+    cancel: "取消",
+    updateSupabase: "更新至 Supabase 雲端",
+    saveSupabase: "儲存至 Supabase 雲端",
+    adminAccessTitle: "🔒 管理員權限驗證",
+    adminAccessSub: "請輸入管理員 PIN / 密碼以進行調酒配方管理。",
+    adminPinLabel: "管理員 PIN / 密碼",
+    pinPlaceholder: "請輸入管理員 PIN...",
+    login: "登入驗證",
+    enterPinError: "請輸入管理員 PIN 碼。",
+    incorrectPinError: "PIN 碼錯誤，請重新輸入。",
+    requiredFieldName: "請輸入調酒名稱。",
+    confirmDeleteTitle: "刪除調酒",
+    confirmDeleteMsg: (name: string) => `確定要從 Supabase 雲端資料庫刪除 "${name}" 嗎？`,
+    catNone: "無分類",
+    catStirred: "攪拌法 (STIRRED)",
+    catShaken: "搖盪法 (SHAKEN)",
+    catBomb: "深水炸彈 (BOMB)",
+    catShot: "純飲/一口酒 (SHOT)",
+  }
+};
+
 const getCategoryStyle = (category?: string) => {
   const cat = (category || '').toLowerCase().trim();
-  switch (cat) {
-    case 'stirred':
-      return {
-        badgeStyle: { backgroundColor: 'rgba(255, 170, 0, 0.18)', borderColor: '#FFAA00' },
-        textStyle: { color: '#FFAA00' }
-      };
-    case 'shaken':
-      return {
-        badgeStyle: { backgroundColor: 'rgba(0, 240, 255, 0.18)', borderColor: '#00F0FF' },
-        textStyle: { color: '#00F0FF' }
-      };
-    case 'bomb':
-      return {
-        badgeStyle: { backgroundColor: 'rgba(255, 51, 85, 0.18)', borderColor: '#FF3355' },
-        textStyle: { color: '#FF3355' }
-      };
-    case 'shot':
-      return {
-        badgeStyle: { backgroundColor: 'rgba(215, 75, 255, 0.18)', borderColor: '#D74BFF' },
-        textStyle: { color: '#D74BFF' }
-      };
-    default:
-      return {
-        badgeStyle: { backgroundColor: 'rgba(255, 255, 255, 0.05)', borderColor: 'rgba(255, 255, 255, 0.15)' },
-        textStyle: { color: '#888888' }
-      };
+  if (cat.includes('stirred') || cat.includes('攪拌')) {
+    return {
+      badgeStyle: { backgroundColor: 'rgba(255, 170, 0, 0.18)', borderColor: '#FFAA00' },
+      textStyle: { color: '#FFAA00' }
+    };
   }
+  if (cat.includes('shaken') || cat.includes('搖盪')) {
+    return {
+      badgeStyle: { backgroundColor: 'rgba(0, 240, 255, 0.18)', borderColor: '#00F0FF' },
+      textStyle: { color: '#00F0FF' }
+    };
+  }
+  if (cat.includes('bomb') || cat.includes('炸彈')) {
+    return {
+      badgeStyle: { backgroundColor: 'rgba(255, 51, 85, 0.18)', borderColor: '#FF3355' },
+      textStyle: { color: '#FF3355' }
+    };
+  }
+  if (cat.includes('shot') || cat.includes('一口酒') || cat.includes('純飲')) {
+    return {
+      badgeStyle: { backgroundColor: 'rgba(215, 75, 255, 0.18)', borderColor: '#D74BFF' },
+      textStyle: { color: '#D74BFF' }
+    };
+  }
+  return {
+    badgeStyle: { backgroundColor: 'rgba(255, 255, 255, 0.05)', borderColor: 'rgba(255, 255, 255, 0.15)' },
+    textStyle: { color: '#888888' }
+  };
 };
 
 const inlineGlassCard: any = {
@@ -76,6 +194,10 @@ export default function App() {
   const [recipesList, setRecipesList] = useState<Cocktail[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCocktail, setSelectedCocktail] = useState<Cocktail | null>(null);
+
+  // Language State: 'en' | 'zh'
+  const [language, setLanguage] = useState<Language>('en');
+  const t = i18n[language];
   
   // Loading & Supabase status
   const [loading, setLoading] = useState<boolean>(true);
@@ -105,9 +227,10 @@ export default function App() {
 
   const inputRef = useRef<TextInput>(null);
 
-  const loadRecipes = async () => {
+  const loadRecipes = async (targetLang: Language = language) => {
     setLoading(true);
-    const { data, error } = await fetchRecipesFromSupabase();
+    const tableName = targetLang === 'zh' ? 'cocktailsZH' : 'cocktails';
+    const { data, error } = await fetchRecipesFromSupabase(tableName);
     if (data) {
       setRecipesList(data);
       setIsCloudConnected(!error);
@@ -118,18 +241,30 @@ export default function App() {
     setLoading(false);
   };
 
+  const handleLanguageChange = (newLang: Language) => {
+    if (newLang === language) return;
+    setLanguage(newLang);
+    loadRecipes(newLang);
+  };
+
   useEffect(() => {
     if (typeof document !== 'undefined') {
-      document.title = "Gong High's Grog Guide";
+      document.title = t.appTitle;
     }
-    loadRecipes();
+    loadRecipes(language);
     const timer = setTimeout(() => {
       inputRef.current?.focus();
     }, 100);
     return () => clearTimeout(timer);
   }, []);
 
-  // Filter recipes live by name, ingredient, glass, or ice
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      document.title = t.appTitle;
+    }
+  }, [language]);
+
+  // Filter recipes live by name, ingredient, glass, ice, category, or instructions
   const filteredRecipes = recipesList.filter((recipe) => {
     const q = searchQuery.toLowerCase().trim();
     if (!q) return true;
@@ -142,8 +277,10 @@ export default function App() {
     );
     const matchesGlass = (recipe.glass || '').toLowerCase().includes(q);
     const matchesIce = (recipe.ice || '').toLowerCase().includes(q);
+    const matchesMethod = (recipe.method || '').toLowerCase().includes(q);
+    const matchesGarnish = (recipe.garnish || '').toLowerCase().includes(q);
 
-    return matchesName || matchesCategory || matchesIngredient || matchesGlass || matchesIce;
+    return matchesName || matchesCategory || matchesIngredient || matchesGlass || matchesIce || matchesMethod || matchesGarnish;
   });
 
   const isIngredientMatch = (ingName: string) => {
@@ -154,7 +291,7 @@ export default function App() {
   // Handle Admin PIN validation
   const handleAdminLogin = async () => {
     if (!passcodeInput.trim()) {
-      setPasscodeError('Please enter the Admin PIN.');
+      setPasscodeError(t.enterPinError);
       return;
     }
 
@@ -169,10 +306,9 @@ export default function App() {
       setPasscodeInput('');
       setPasscodeError('');
     } else {
-      setPasscodeError('Incorrect PIN. Please try again.');
+      setPasscodeError(t.incorrectPinError);
     }
   };
-
 
   // Open Admin Form for Create or Edit
   const openAdminForm = (cocktail?: Cocktail) => {
@@ -225,7 +361,7 @@ export default function App() {
   // Save Recipe (Create or Update)
   const handleSaveRecipe = async () => {
     if (!formName.trim()) {
-      Alert.alert('Required Field', 'Please enter a drink name.');
+      Alert.alert(t.requiredFieldName, t.requiredFieldName);
       return;
     }
 
@@ -248,27 +384,25 @@ export default function App() {
       // Update in Supabase
       const { error } = await updateRecipeInSupabase(editingRecipeId, payload);
       if (error) {
-        // Fallback local update
         setRecipesList((prev) =>
           prev.map((item) =>
             item.id === editingRecipeId ? { ...item, ...payload } : item
           )
         );
       } else {
-        await loadRecipes();
+        await loadRecipes(language);
       }
     } else {
       // Create in Supabase
       const { data, error } = await createRecipeInSupabase(payload);
-      if (error || !data) {
-        // Fallback local create
-        const localNew: Cocktail = {
+      if (data) {
+        await loadRecipes(language);
+      } else {
+        const fallbackNew: Cocktail = {
           id: Date.now().toString(),
           ...payload
         };
-        setRecipesList([localNew, ...recipesList]);
-      } else {
-        await loadRecipes();
+        setRecipesList((prev) => [fallbackNew, ...prev]);
       }
     }
 
@@ -278,26 +412,36 @@ export default function App() {
 
   // Delete Recipe
   const handleDeleteRecipe = async (id: string, name: string) => {
-    Alert.alert(
-      'Delete Recipe',
-      `Are you sure you want to delete "${name}" from Supabase?`,
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Delete',
-          style: 'destructive',
-          onPress: async () => {
-            setLoading(true);
-            await deleteRecipeFromSupabase(id);
-            setRecipesList((prev) => prev.filter((r) => r.id !== id));
-            if (selectedCocktail?.id === id) {
-              setSelectedCocktail(null);
-            }
-            setLoading(false);
+    const confirmDelete = () => {
+      deleteRecipeFromSupabase(id).then(({ error }) => {
+        if (!error) {
+          setRecipesList((prev) => prev.filter((item) => item.id !== id));
+          if (selectedCocktail?.id === id) {
+            setSelectedCocktail(null);
+          }
+        } else {
+          setRecipesList((prev) => prev.filter((item) => item.id !== id));
+          if (selectedCocktail?.id === id) {
+            setSelectedCocktail(null);
           }
         }
-      ]
-    );
+      });
+    };
+
+    if (typeof window !== 'undefined' && window.confirm) {
+      if (window.confirm(t.confirmDeleteMsg(name))) {
+        confirmDelete();
+      }
+    } else {
+      Alert.alert(
+        t.confirmDeleteTitle,
+        t.confirmDeleteMsg(name),
+        [
+          { text: t.cancel, style: 'cancel' },
+          { text: t.delete, style: 'destructive', onPress: confirmDelete }
+        ]
+      );
+    }
   };
 
   return (
@@ -306,1257 +450,1297 @@ export default function App() {
         <StatusBar style="light" backgroundColor="transparent" />
 
         {/* Header Bar */}
-      <View style={styles.header}>
-        <View style={styles.titleRow}>
-          <View style={styles.logoBadge}>
-            <Text style={styles.logoEmoji}>🍸</Text>
-          </View>
-          <View style={{ flex: 1 }}>
-            <Text style={styles.appTitle} numberOfLines={1} adjustsFontSizeToFit>
-              Gong High's Grog Guide
-            </Text>
-            <View style={styles.cloudSyncRow}>
-              <View
-                style={[
-                  styles.syncDot,
-                  { backgroundColor: isCloudConnected ? '#00FF66' : '#FF9900' }
-                ]}
-              />
-              <Text style={styles.syncText}>
-                {isCloudConnected ? 'SUPABASE LIVE' : 'LOCAL CACHE'}
-              </Text>
+        <View style={styles.header}>
+          <View style={styles.titleRow}>
+            <View style={styles.logoBadge}>
+              <Text style={styles.logoEmoji}>🍸</Text>
             </View>
-          </View>
-
-          {/* Admin Add Drink Button */}
-          {isAdmin && (
-            <TouchableOpacity
-              style={styles.adminAddBtn}
-              onPress={() => openAdminForm()}
-            >
-              <Text style={styles.adminAddBtnText}>+ ADD DRINK</Text>
-            </TouchableOpacity>
-          )}
-        </View>
-
-        {/* Prominent Search Input */}
-        <View style={[styles.searchContainer, inlineGlassSearch]} {...({ className: 'glass-input', dataSet: { glassSearch: 'true' } } as any)}>
-          <Text style={styles.searchIcon}>🔍</Text>
-          <TextInput
-            ref={inputRef}
-            style={styles.searchInput}
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-            placeholder="SEARCH DRINK OR INGREDIENT..."
-            placeholderTextColor="#777777"
-            autoFocus={true}
-            autoCapitalize="none"
-            autoCorrect={false}
-          />
-          {searchQuery.length > 0 && (
-            <TouchableOpacity
-              onPress={() => setSearchQuery('')}
-              style={styles.clearButton}
-              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-            >
-              <Text style={styles.clearButtonText}>✕</Text>
-            </TouchableOpacity>
-          )}
-        </View>
-      </View>
-
-      {/* Drinks List */}
-      {loading ? (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#FFE600" />
-          <Text style={styles.loadingText}>SYNCING WITH SUPABASE...</Text>
-        </View>
-      ) : (
-        <FlatList
-          data={filteredRecipes}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={styles.listContainer}
-          keyboardShouldPersistTaps="handled"
-          ListEmptyComponent={
-            <View style={styles.emptyState}>
-              <Text style={styles.emptyIcon}>🔍</Text>
-              <Text style={styles.emptyTitle}>NO MATCHING DRINKS</Text>
-              <Text style={styles.emptySubtitle}>
-                No cocktail matches "{searchQuery}". Try searching another ingredient or spirit.
+            <View style={{ flex: 1 }}>
+              <Text style={styles.appTitle} numberOfLines={1} adjustsFontSizeToFit>
+                {t.appTitle}
               </Text>
-              <TouchableOpacity
-                onPress={() => setSearchQuery('')}
-                style={styles.resetButton}
-              >
-                <Text style={styles.resetButtonText}>RESET SEARCH</Text>
-              </TouchableOpacity>
+              <View style={styles.cloudSyncRow}>
+                <View
+                  style={[
+                    styles.syncDot,
+                    { backgroundColor: isCloudConnected ? '#00FF66' : '#FF9900' }
+                  ]}
+                />
+                <Text style={styles.syncText}>
+                  {isCloudConnected ? t.supabaseLive : t.localCache}
+                </Text>
+              </View>
             </View>
-          }
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              style={[styles.card, inlineGlassCard]}
-              {...({ className: 'glass-card', dataSet: { glassCard: 'true' } } as any)}
-              activeOpacity={0.8}
-              onPress={() => {
-                Keyboard.dismiss();
-                setSelectedCocktail(item);
-              }}
-            >
-              <View style={styles.cardHeader}>
-                <View style={styles.cardTitleGroup}>
-                  <View style={styles.cardTopRow}>
-                    <Text style={styles.cardTitle}>{item.name}</Text>
-                    {item.category?.trim() ? (() => {
-                      const catTheme = getCategoryStyle(item.category);
-                      return (
-                        <View style={[styles.cardCategoryBadge, catTheme.badgeStyle]}>
-                          <Text style={[styles.cardCategoryText, catTheme.textStyle]}>
-                            {item.category.trim().toUpperCase()}
-                          </Text>
-                        </View>
-                      );
-                    })() : null}
-                  </View>
-                  {(item.glass?.trim() || item.ice?.trim()) ? (
-                    <View style={styles.cardMetaRow}>
-                      {item.glass?.trim() ? (
-                        <Text style={styles.cardGlass}>🥃 Glass: {item.glass.trim()}</Text>
-                      ) : null}
-                      {item.ice?.trim() ? (
-                        <Text style={styles.cardIce}>🧊 Ice: {item.ice.trim()}</Text>
-                      ) : null}
-                    </View>
-                  ) : null}
-                </View>
 
-                {/* Card Admin Actions */}
-                <View style={styles.cardActionRow}>
-                  {isAdmin && (
-                    <TouchableOpacity
-                      onPress={() => openAdminForm(item)}
-                      style={styles.cardEditBtn}
-                    >
-                      <Text style={styles.cardEditBtnText}>EDIT</Text>
-                    </TouchableOpacity>
-                  )}
-                  <Text style={styles.cardArrow}>➔</Text>
-                </View>
-              </View>
-
-              {/* Ingredient Pills */}
-              <View style={styles.ingredientsRow}>
-                {item.ingredients.map((ing, idx) => {
-                  const matched = isIngredientMatch(ing.name);
-                  return (
-                    <View
-                      key={idx}
-                      style={[styles.ingPill, matched && styles.ingPillMatched]}
-                    >
-                      <Text style={[styles.ingAmount, matched && styles.ingMatchedText]}>
-                        {ing.amount}
-                      </Text>
-                      <Text style={[styles.ingName, matched && styles.ingMatchedText]}>
-                        {ing.name}
-                      </Text>
-                    </View>
-                  );
-                })}
-              </View>
-            </TouchableOpacity>
-          )}
-        />
-      )}
-
-      {/* FULL RECIPE MODAL OVERLAY */}
-      {selectedCocktail && (
-        <Modal
-          visible={!!selectedCocktail}
-          animationType="slide"
-          transparent={true}
-          onRequestClose={() => setSelectedCocktail(null)}
-        >
-          <View style={styles.modalOverlay}>
-            <Pressable style={styles.backdrop} onPress={() => setSelectedCocktail(null)} />
-
-            <View
-              style={[styles.modalContent, inlineGlassModal, { borderTopWidth: 4, borderColor: '#FFE600' }]}
-              {...({ className: 'glass-card', dataSet: { glassModal: 'true' } } as any)}
-            >
-              {/* Modal Top Bar */}
-              <View style={styles.modalHeader}>
-                <View style={styles.modalTitleGroup}>
-                  {selectedCocktail.category?.trim() ? (() => {
-                    const catTheme = getCategoryStyle(selectedCocktail.category);
-                    return (
-                      <View style={[styles.categoryBadge, catTheme.badgeStyle]}>
-                        <Text style={[styles.categoryText, catTheme.textStyle]}>
-                          {selectedCocktail.category.trim().toUpperCase()}
-                        </Text>
-                      </View>
-                    );
-                  })() : null}
-                  <Text style={styles.modalTitle}>{selectedCocktail.name}</Text>
-                  {(selectedCocktail.glass?.trim() || selectedCocktail.ice?.trim()) ? (
-                    <View style={styles.modalMetaRow}>
-                      {selectedCocktail.glass?.trim() ? (
-                        <Text style={styles.modalGlass}>🥃 Glass: {selectedCocktail.glass.trim()}</Text>
-                      ) : null}
-                      {selectedCocktail.ice?.trim() ? (
-                        <Text style={styles.modalIce}>🧊 Ice: {selectedCocktail.ice.trim()}</Text>
-                      ) : null}
-                    </View>
-                  ) : null}
-                </View>
-
+            {/* Header Right Controls: Language Toggle & Explicit Admin Button */}
+            <View style={styles.headerActionsGroup}>
+              {/* EN / 繁中 Language Toggle Pill */}
+              <View style={styles.langTogglePill}>
                 <TouchableOpacity
-                  onPress={() => setSelectedCocktail(null)}
-                  style={styles.modalCloseBtn}
-                  hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }}
+                  style={[styles.langToggleSegment, language === 'en' && styles.langToggleSegmentActive]}
+                  onPress={() => handleLanguageChange('en')}
+                  activeOpacity={0.8}
                 >
-                  <Text style={styles.modalCloseBtnText}>✕</Text>
+                  <Text style={[styles.langToggleText, language === 'en' && styles.langToggleTextActive]}>EN</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.langToggleSegment, language === 'zh' && styles.langToggleSegmentActive]}
+                  onPress={() => handleLanguageChange('zh')}
+                  activeOpacity={0.8}
+                >
+                  <Text style={[styles.langToggleText, language === 'zh' && styles.langToggleTextActive]}>繁中</Text>
                 </TouchableOpacity>
               </View>
 
-              {/* Scrollable Recipe Details */}
-              <ScrollView
-                style={styles.modalBody}
-                contentContainerStyle={styles.modalBodyContent}
-              >
-                {/* Ingredients Section */}
-                <View style={styles.section}>
-                  <Text style={styles.sectionHeader}>INGREDIENTS</Text>
-                  {selectedCocktail.ingredients.map((ing, idx) => (
-                    <View key={idx} style={[styles.recipeRow, inlineGlassCard]} {...({ className: 'glass-card' } as any)}>
-                      <Text style={styles.recipeIngName}>{ing.name}</Text>
-                      <Text style={styles.recipeIngAmount}>{ing.amount}</Text>
-                    </View>
-                  ))}
-                </View>
+              {/* Explicit Text Admin Button (Top Right) */}
+              {isAdmin ? (
+                <TouchableOpacity
+                  style={styles.adminHeaderBtnActive}
+                  onPress={() => setIsAdmin(false)}
+                  activeOpacity={0.8}
+                >
+                  <Text style={styles.adminHeaderBtnActiveText}>{t.adminLogout}</Text>
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity
+                  style={styles.adminHeaderBtn}
+                  onPress={() => {
+                    setPasscodeInput('');
+                    setPasscodeError('');
+                    setLoginModalVisible(true);
+                  }}
+                  activeOpacity={0.8}
+                >
+                  <Text style={styles.adminHeaderBtnText}>{t.adminLogin}</Text>
+                </TouchableOpacity>
+              )}
 
-                {/* Method Section */}
-                {selectedCocktail.method ? (
-                  <View style={styles.section}>
-                    <Text style={styles.sectionHeader}>PREPARATION METHOD</Text>
-                    <View style={[styles.methodBox, inlineGlassCard]} {...({ className: 'glass-card' } as any)}>
-                      <Text style={styles.methodText}>{selectedCocktail.method}</Text>
-                    </View>
-                  </View>
-                ) : null}
-
-                {/* Garnish Section */}
-                {selectedCocktail.garnish ? (
-                  <View style={styles.section}>
-                    <Text style={styles.sectionHeader}>GARNISH</Text>
-                    <View style={styles.garnishBox}>
-                      <Text style={styles.garnishText}>✨ {selectedCocktail.garnish}</Text>
-                    </View>
-                  </View>
-                ) : null}
-              </ScrollView>
-
-              {/* Bottom Quick Actions Bar */}
+              {/* Admin Add Drink Button if logged in */}
               {isAdmin && (
-                <View style={styles.modalFooter}>
-                  <TouchableOpacity
-                    style={styles.modalEditBtn}
-                    onPress={() => {
-                      const current = selectedCocktail;
-                      setSelectedCocktail(null);
-                      openAdminForm(current);
-                    }}
-                  >
-                    <Text style={styles.modalEditBtnText}>✏️ EDIT SPEC</Text>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity
-                    style={styles.modalDeleteBtn}
-                    onPress={() => handleDeleteRecipe(selectedCocktail.id, selectedCocktail.name)}
-                  >
-                    <Text style={styles.modalDeleteBtnText}>🗑️ DELETE</Text>
-                  </TouchableOpacity>
-                </View>
+                <TouchableOpacity
+                  style={styles.adminAddBtn}
+                  onPress={() => openAdminForm()}
+                  activeOpacity={0.8}
+                >
+                  <Text style={styles.adminAddBtnText}>{t.addDrink}</Text>
+                </TouchableOpacity>
               )}
             </View>
           </View>
-        </Modal>
-      )}
 
-      {/* ADMIN CREATE / EDIT RECIPE MODAL */}
-      {adminModalVisible && (
-        <Modal
-          visible={adminModalVisible}
-          animationType="slide"
-          transparent={true}
-          onRequestClose={() => setAdminModalVisible(false)}
-        >
-          <View style={styles.modalOverlay}>
-            <Pressable style={styles.backdrop} onPress={() => setAdminModalVisible(false)} />
+          {/* Prominent Search Input */}
+          <View style={[styles.searchContainer, inlineGlassSearch]} {...({ className: 'glass-input', dataSet: { glassSearch: 'true' } } as any)}>
+            <Text style={styles.searchIcon}>🔍</Text>
+            <TextInput
+              ref={inputRef}
+              style={styles.searchInput}
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              placeholder={t.searchPlaceholder}
+              placeholderTextColor="#777777"
+              autoFocus={true}
+              autoCapitalize="none"
+              autoCorrect={false}
+            />
+            {searchQuery.length > 0 && (
+              <TouchableOpacity
+                onPress={() => setSearchQuery('')}
+                style={styles.clearButton}
+                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              >
+                <Text style={styles.clearButtonText}>✕</Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        </View>
 
-            <View style={[styles.modalContent, { maxHeight: '94%' }]}>
-              {/* Admin Modal Header */}
-              <View style={styles.adminHeader}>
-                <Text style={styles.adminTitle}>
-                  {editingRecipeId ? 'EDIT COCKTAIL SPEC' : 'ADD NEW COCKTAIL'}
+        {/* Drinks List */}
+        {loading ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color="#FFE600" />
+            <Text style={styles.loadingText}>{t.syncing}</Text>
+          </View>
+        ) : (
+          <FlatList
+            data={filteredRecipes}
+            keyExtractor={(item) => item.id}
+            contentContainerStyle={styles.listContainer}
+            keyboardShouldPersistTaps="handled"
+            ListEmptyComponent={
+              <View style={styles.emptyState}>
+                <Text style={styles.emptyIcon}>🔍</Text>
+                <Text style={styles.emptyTitle}>{t.noMatching}</Text>
+                <Text style={styles.emptySubtitle}>
+                  {t.noMatchingSub(searchQuery)}
                 </Text>
                 <TouchableOpacity
-                  onPress={() => setAdminModalVisible(false)}
-                  style={styles.modalCloseBtn}
+                  onPress={() => setSearchQuery('')}
+                  style={styles.resetButton}
                 >
-                  <Text style={styles.modalCloseBtnText}>✕</Text>
+                  <Text style={styles.resetButtonText}>{t.resetSearch}</Text>
                 </TouchableOpacity>
               </View>
+            }
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                style={[styles.card, inlineGlassCard]}
+                {...({ className: 'glass-card', dataSet: { glassCard: 'true' } } as any)}
+                activeOpacity={0.8}
+                onPress={() => {
+                  Keyboard.dismiss();
+                  setSelectedCocktail(item);
+                }}
+              >
+                <View style={styles.cardHeader}>
+                  <View style={styles.cardTitleGroup}>
+                    <View style={styles.cardTopRow}>
+                      <Text style={styles.cardTitle}>{item.name}</Text>
+                      {item.category?.trim() ? (() => {
+                        const catTheme = getCategoryStyle(item.category);
+                        return (
+                          <View style={[styles.cardCategoryBadge, catTheme.badgeStyle]}>
+                            <Text style={[styles.cardCategoryText, catTheme.textStyle]}>
+                              {item.category.trim().toUpperCase()}
+                            </Text>
+                          </View>
+                        );
+                      })() : null}
+                    </View>
+                    {(item.glass?.trim() || item.ice?.trim()) ? (
+                      <View style={styles.cardMetaRow}>
+                        {item.glass?.trim() ? (
+                          <Text style={styles.cardGlass}>🥃 {t.glass}: {item.glass.trim()}</Text>
+                        ) : null}
+                        {item.ice?.trim() ? (
+                          <Text style={styles.cardIce}>🧊 {t.ice}: {item.ice.trim()}</Text>
+                        ) : null}
+                      </View>
+                    ) : null}
+                  </View>
 
-              {/* Admin Form Inputs */}
-              <ScrollView style={styles.adminBody} contentContainerStyle={styles.adminBodyContent}>
-                <View style={styles.formGroup}>
-                  <Text style={styles.formLabel}>COCKTAIL NAME *</Text>
-                  <TextInput
-                    style={styles.formInput}
-                    value={formName}
-                    onChangeText={setFormName}
-                    placeholder="e.g. Espresso Martini"
-                    placeholderTextColor="#666666"
-                  />
+                  {/* Card Admin Actions */}
+                  <View style={styles.cardActionRow}>
+                    {isAdmin && (
+                      <TouchableOpacity
+                        onPress={() => openAdminForm(item)}
+                        style={styles.cardEditBtn}
+                      >
+                        <Text style={styles.cardEditBtnText}>{t.edit}</Text>
+                      </TouchableOpacity>
+                    )}
+                    <Text style={styles.cardArrow}>➔</Text>
+                  </View>
                 </View>
 
-                <View style={styles.formGroup}>
-                  <Text style={styles.formLabel}>CATEGORY</Text>
-                  <View style={styles.categoryPickerRow}>
-                    {['None', 'Stirred', 'Shaken', 'Bomb', 'Shot'].map((cat) => {
-                      const valueToSave = cat === 'None' ? '' : cat;
-                      const isSelected = formCategory === valueToSave;
-                      const catTheme = getCategoryStyle(valueToSave);
-                      return (
-                        <TouchableOpacity
-                          key={cat}
-                          onPress={() => setFormCategory(valueToSave)}
+                {/* Ingredient Pills */}
+                <View style={styles.ingredientsRow}>
+                  {item.ingredients.map((ing, idx) => {
+                    const matched = isIngredientMatch(ing.name);
+                    return (
+                      <View
+                        key={idx}
+                        style={[
+                          styles.ingredientPill,
+                          matched ? styles.ingredientPillMatched : null
+                        ]}
+                      >
+                        <Text
                           style={[
-                            styles.categoryPickerOption,
-                            isSelected && (valueToSave ? catTheme.badgeStyle : styles.categoryPickerOptionSelected)
+                            styles.ingredientPillName,
+                            matched ? styles.ingredientPillNameMatched : null
                           ]}
                         >
-                          <Text
+                          {ing.name}
+                        </Text>
+                        <Text
+                          style={[
+                            styles.ingredientPillAmount,
+                            matched ? styles.ingredientPillAmountMatched : null
+                          ]}
+                        >
+                          {ing.amount}
+                        </Text>
+                      </View>
+                    );
+                  })}
+                </View>
+              </TouchableOpacity>
+            )}
+          />
+        )}
+
+        {/* COCKTAIL DETAIL MODAL */}
+        {selectedCocktail && (
+          <Modal
+            visible={!!selectedCocktail}
+            animationType="fade"
+            transparent={true}
+            onRequestClose={() => setSelectedCocktail(null)}
+          >
+            <View style={styles.modalOverlay}>
+              <Pressable style={styles.backdrop} onPress={() => setSelectedCocktail(null)} />
+
+              <View style={[styles.modalContent, inlineGlassModal]} {...({ className: 'glass-modal', dataSet: { glassModal: 'true' } } as any)}>
+                {/* Modal Header */}
+                <View style={styles.modalHeader}>
+                  <View style={{ flex: 1 }}>
+                    <View style={styles.modalTopRow}>
+                      <Text style={styles.modalTitle}>{selectedCocktail.name}</Text>
+                      {selectedCocktail.category?.trim() ? (() => {
+                        const catTheme = getCategoryStyle(selectedCocktail.category);
+                        return (
+                          <View style={[styles.cardCategoryBadge, catTheme.badgeStyle]}>
+                            <Text style={[styles.cardCategoryText, catTheme.textStyle]}>
+                              {selectedCocktail.category.trim().toUpperCase()}
+                            </Text>
+                          </View>
+                        );
+                      })() : null}
+                    </View>
+
+                    {(selectedCocktail.glass?.trim() || selectedCocktail.ice?.trim()) ? (
+                      <View style={styles.modalMetaRow}>
+                        {selectedCocktail.glass?.trim() ? (
+                          <Text style={styles.modalGlass}>🥃 {t.glass}: {selectedCocktail.glass.trim()}</Text>
+                        ) : null}
+                        {selectedCocktail.ice?.trim() ? (
+                          <Text style={styles.modalIce}>🧊 {t.ice}: {selectedCocktail.ice.trim()}</Text>
+                        ) : null}
+                      </View>
+                    ) : null}
+                  </View>
+
+                  <TouchableOpacity
+                    onPress={() => setSelectedCocktail(null)}
+                    style={styles.modalCloseBtn}
+                    hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }}
+                  >
+                    <Text style={styles.modalCloseBtnText}>✕</Text>
+                  </TouchableOpacity>
+                </View>
+
+                {/* Scrollable Recipe Details */}
+                <ScrollView
+                  style={styles.modalBody}
+                  contentContainerStyle={styles.modalBodyContent}
+                >
+                  {/* Ingredients Section */}
+                  <View style={styles.section}>
+                    <Text style={styles.sectionHeader}>{t.ingredients}</Text>
+                    {selectedCocktail.ingredients.map((ing, idx) => (
+                      <View key={idx} style={[styles.recipeRow, inlineGlassCard]} {...({ className: 'glass-card' } as any)}>
+                        <Text style={styles.recipeIngName}>{ing.name}</Text>
+                        <Text style={styles.recipeIngAmount}>{ing.amount}</Text>
+                      </View>
+                    ))}
+                  </View>
+
+                  {/* Method Section */}
+                  {selectedCocktail.method ? (
+                    <View style={styles.section}>
+                      <Text style={styles.sectionHeader}>{t.method}</Text>
+                      <View style={[styles.methodBox, inlineGlassCard]} {...({ className: 'glass-card' } as any)}>
+                        <Text style={styles.methodText}>{selectedCocktail.method}</Text>
+                      </View>
+                    </View>
+                  ) : null}
+
+                  {/* Garnish Section */}
+                  {selectedCocktail.garnish ? (
+                    <View style={styles.section}>
+                      <Text style={styles.sectionHeader}>{t.garnish}</Text>
+                      <View style={styles.garnishBox}>
+                        <Text style={styles.garnishText}>✨ {selectedCocktail.garnish}</Text>
+                      </View>
+                    </View>
+                  ) : null}
+                </ScrollView>
+
+                {/* Bottom Quick Actions Bar */}
+                {isAdmin && (
+                  <View style={styles.modalFooter}>
+                    <TouchableOpacity
+                      style={styles.modalEditBtn}
+                      onPress={() => {
+                        const current = selectedCocktail;
+                        setSelectedCocktail(null);
+                        openAdminForm(current);
+                      }}
+                    >
+                      <Text style={styles.modalEditBtnText}>{t.editSpec}</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                      style={styles.modalDeleteBtn}
+                      onPress={() => handleDeleteRecipe(selectedCocktail.id, selectedCocktail.name)}
+                    >
+                      <Text style={styles.modalDeleteBtnText}>{t.delete}</Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
+              </View>
+            </View>
+          </Modal>
+        )}
+
+        {/* ADMIN CREATE / EDIT RECIPE MODAL */}
+        {adminModalVisible && (
+          <Modal
+            visible={adminModalVisible}
+            animationType="slide"
+            transparent={true}
+            onRequestClose={() => setAdminModalVisible(false)}
+          >
+            <View style={styles.modalOverlay}>
+              <Pressable style={styles.backdrop} onPress={() => setAdminModalVisible(false)} />
+
+              <View style={[styles.modalContent, { maxHeight: '94%' }]}>
+                {/* Admin Modal Header */}
+                <View style={styles.adminHeader}>
+                  <Text style={styles.adminTitle}>
+                    {editingRecipeId ? t.editCocktailTitle : t.addCocktailTitle}
+                  </Text>
+                  <TouchableOpacity
+                    onPress={() => setAdminModalVisible(false)}
+                    style={styles.modalCloseBtn}
+                  >
+                    <Text style={styles.modalCloseBtnText}>✕</Text>
+                  </TouchableOpacity>
+                </View>
+
+                {/* Admin Form Inputs */}
+                <ScrollView style={styles.adminBody} contentContainerStyle={styles.adminBodyContent}>
+                  <View style={styles.formGroup}>
+                    <Text style={styles.formLabel}>{t.cocktailNameLabel}</Text>
+                    <TextInput
+                      style={styles.formInput}
+                      value={formName}
+                      onChangeText={setFormName}
+                      placeholder={t.namePlaceholder}
+                      placeholderTextColor="#666666"
+                    />
+                  </View>
+
+                  <View style={styles.formGroup}>
+                    <Text style={styles.formLabel}>{t.categoryLabel}</Text>
+                    <View style={styles.categoryPickerRow}>
+                      {[
+                        { label: t.catNone, val: '' },
+                        { label: t.catStirred, val: 'Stirred' },
+                        { label: t.catShaken, val: 'Shaken' },
+                        { label: t.catBomb, val: 'Bomb' },
+                        { label: t.catShot, val: 'Shot' }
+                      ].map((item) => {
+                        const isSelected = formCategory === item.val;
+                        const catTheme = getCategoryStyle(item.val);
+                        return (
+                          <TouchableOpacity
+                            key={item.val || 'none'}
+                            onPress={() => setFormCategory(item.val)}
                             style={[
-                              styles.categoryPickerText,
-                              isSelected && (valueToSave ? catTheme.textStyle : styles.categoryPickerTextSelected)
+                              styles.categoryPickerOption,
+                              isSelected && (item.val ? catTheme.badgeStyle : styles.categoryPickerOptionSelected)
                             ]}
                           >
-                            {cat.toUpperCase()}
-                          </Text>
-                        </TouchableOpacity>
-                      );
-                    })}
+                            <Text
+                              style={[
+                                styles.categoryPickerText,
+                                isSelected && (item.val ? catTheme.textStyle : styles.categoryPickerTextSelected)
+                              ]}
+                            >
+                              {item.label}
+                            </Text>
+                          </TouchableOpacity>
+                        );
+                      })}
+                    </View>
                   </View>
-                </View>
 
-                <View style={styles.formRow}>
-                  <View style={[styles.formGroup, { flex: 1 }]}>
-                    <Text style={styles.formLabel}>GLASS TYPE</Text>
+                  <View style={styles.formRow}>
+                    <View style={[styles.formGroup, { flex: 1, marginRight: 8 }]}>
+                      <Text style={styles.formLabel}>{t.glassLabel}</Text>
+                      <TextInput
+                        style={styles.formInput}
+                        value={formGlass}
+                        onChangeText={setFormGlass}
+                        placeholder={t.glassPlaceholder}
+                        placeholderTextColor="#666666"
+                      />
+                    </View>
+
+                    <View style={[styles.formGroup, { flex: 1, marginLeft: 8 }]}>
+                      <Text style={styles.formLabel}>{t.iceLabel}</Text>
+                      <TextInput
+                        style={styles.formInput}
+                        value={formIce}
+                        onChangeText={setFormIce}
+                        placeholder={t.icePlaceholder}
+                        placeholderTextColor="#666666"
+                      />
+                    </View>
+                  </View>
+
+                  <View style={styles.formGroup}>
+                    <Text style={styles.formLabel}>{t.garnishLabel}</Text>
                     <TextInput
                       style={styles.formInput}
-                      value={formGlass}
-                      onChangeText={setFormGlass}
-                      placeholder="e.g. Coupe Glass, Rocks, etc."
+                      value={formGarnish}
+                      onChangeText={setFormGarnish}
+                      placeholder={t.garnishPlaceholder}
                       placeholderTextColor="#666666"
-                      autoCapitalize="words"
                     />
                   </View>
 
-                  <View style={[styles.formGroup, { flex: 1 }]}>
-                    <Text style={styles.formLabel}>ICE TYPE</Text>
-                    <TextInput
-                      style={styles.formInput}
-                      value={formIce}
-                      onChangeText={setFormIce}
-                      placeholder="e.g. Single Cube, Crushed, etc."
-                      placeholderTextColor="#666666"
-                      autoCapitalize="words"
-                    />
-                  </View>
-                </View>
+                  {/* Dynamic Ingredient Input Fields */}
+                  <View style={styles.formGroup}>
+                    <View style={styles.ingredientHeaderRow}>
+                      <Text style={styles.formLabel}>{t.ingredientsLabel}</Text>
+                    </View>
 
-                {/* Dynamic Ingredients */}
-                <View style={styles.formGroup}>
-                  <View style={styles.formSectionHeaderRow}>
-                    <Text style={styles.formLabel}>INGREDIENTS</Text>
-                    <TouchableOpacity onPress={addIngredientRow} style={styles.addIngBtn}>
-                      <Text style={styles.addIngBtnText}>+ ADD ROW</Text>
+                    {formIngredients.map((ing, idx) => (
+                      <View key={idx} style={styles.ingredientFormRow}>
+                        <TextInput
+                          style={[styles.formInput, { flex: 2, marginRight: 6 }]}
+                          value={ing.name}
+                          onChangeText={(val) => updateIngredientField(idx, 'name', val)}
+                          placeholder={t.ingredientNameHeader}
+                          placeholderTextColor="#555555"
+                        />
+                        <TextInput
+                          style={[styles.formInput, { flex: 1, marginRight: 6 }]}
+                          value={ing.amount}
+                          onChangeText={(val) => updateIngredientField(idx, 'amount', val)}
+                          placeholder={t.amountHeader}
+                          placeholderTextColor="#555555"
+                        />
+                        {formIngredients.length > 1 && (
+                          <TouchableOpacity
+                            onPress={() => removeIngredientRow(idx)}
+                            style={styles.removeIngBtn}
+                          >
+                            <Text style={styles.removeIngBtnText}>✕</Text>
+                          </TouchableOpacity>
+                        )}
+                      </View>
+                    ))}
+
+                    <TouchableOpacity
+                      onPress={addIngredientRow}
+                      style={styles.addIngRowBtn}
+                    >
+                      <Text style={styles.addIngRowBtnText}>{t.addIngredientBtn}</Text>
                     </TouchableOpacity>
                   </View>
 
-                  {formIngredients.map((ing, idx) => (
-                    <View key={idx} style={styles.ingFormRow}>
-                      <TextInput
-                        style={[styles.formInput, { flex: 2 }]}
-                        value={ing.name}
-                        onChangeText={(val) => updateIngredientField(idx, 'name', val)}
-                        placeholder="Ingredient name"
-                        placeholderTextColor="#666666"
-                      />
-                      <TextInput
-                        style={[styles.formInput, { flex: 1 }]}
-                        value={ing.amount}
-                        onChangeText={(val) => updateIngredientField(idx, 'amount', val)}
-                        placeholder="Amount"
-                        placeholderTextColor="#666666"
-                      />
-                      {formIngredients.length > 1 && (
-                        <TouchableOpacity
-                          onPress={() => removeIngredientRow(idx)}
-                          style={styles.removeIngBtn}
-                        >
-                          <Text style={styles.removeIngBtnText}>✕</Text>
-                        </TouchableOpacity>
-                      )}
-                    </View>
-                  ))}
-                </View>
+                  {/* Preparation Method / Instructions */}
+                  <View style={styles.formGroup}>
+                    <Text style={styles.formLabel}>{t.prepMethodLabel}</Text>
+                    <TextInput
+                      style={[styles.formInput, styles.textAreaInput]}
+                      value={formMethod}
+                      onChangeText={setFormMethod}
+                      placeholder={t.prepMethodPlaceholder}
+                      placeholderTextColor="#666666"
+                      multiline={true}
+                      numberOfLines={4}
+                    />
+                  </View>
+                </ScrollView>
 
-                <View style={styles.formGroup}>
-                  <Text style={styles.formLabel}>GARNISH</Text>
-                  <TextInput
-                    style={styles.formInput}
-                    value={formGarnish}
-                    onChangeText={setFormGarnish}
-                    placeholder="e.g. 3 floating coffee beans"
-                    placeholderTextColor="#666666"
-                  />
-                </View>
-
-                <View style={styles.formGroup}>
-                  <Text style={styles.formLabel}>PREPARATION METHOD</Text>
-                  <TextInput
-                    style={[styles.formInput, styles.textAreaInput]}
-                    value={formMethod}
-                    onChangeText={setFormMethod}
-                    placeholder="Describe shaking, stirring, or building steps..."
-                    placeholderTextColor="#666666"
-                    multiline={true}
-                    numberOfLines={4}
-                  />
-                </View>
-              </ScrollView>
-
-              {/* Admin Save Action */}
-              <View style={styles.modalFooter}>
-                <TouchableOpacity
-                  style={styles.saveBtn}
-                  onPress={handleSaveRecipe}
-                  disabled={saving}
-                >
-                  {saving ? (
-                    <ActivityIndicator color="#000000" />
-                  ) : (
-                    <Text style={styles.saveBtnText}>
-                      {editingRecipeId ? 'UPDATE IN SUPABASE' : 'SAVE TO SUPABASE'}
-                    </Text>
-                  )}
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-        </Modal>
-      )}
-
-      {/* FOOTER */}
-      <View style={styles.footer}>
-        {isAdmin ? (
-          <TouchableOpacity
-            style={styles.logoutBtn}
-            onPress={() => setIsAdmin(false)}
-          >
-            <Text style={styles.logoutBtnText}>Admin (Logout)</Text>
-          </TouchableOpacity>
-        ) : (
-          <TouchableOpacity
-            style={styles.discreetLockBtn}
-            onPress={() => {
-              setPasscodeInput('');
-              setPasscodeError('');
-              setLoginModalVisible(true);
-            }}
-            hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }}
-          >
-            <Text style={styles.discreetLockText}>🔒</Text>
-          </TouchableOpacity>
-        )}
-      </View>
-
-      {/* ADMIN LOGIN MODAL */}
-      {loginModalVisible && (
-        <Modal
-          visible={loginModalVisible}
-          animationType="fade"
-          transparent={true}
-          onRequestClose={() => setLoginModalVisible(false)}
-        >
-          <View style={styles.modalOverlay}>
-            <Pressable style={styles.backdrop} onPress={() => setLoginModalVisible(false)} />
-
-            <View style={styles.loginModalContent}>
-              <View style={styles.loginHeader}>
-                <Text style={styles.loginTitle}>🔒 ADMIN ACCESS</Text>
-                <TouchableOpacity
-                  onPress={() => setLoginModalVisible(false)}
-                  style={styles.modalCloseBtn}
-                >
-                  <Text style={styles.modalCloseBtnText}>✕</Text>
-                </TouchableOpacity>
-              </View>
-
-              <View style={styles.loginBody}>
-                <Text style={styles.loginSubtitle}>
-                  Enter the Admin PIN/Password to manage recipe specs.
-                </Text>
-
-                <View style={styles.formGroup}>
-                  <Text style={styles.formLabel}>ADMIN PIN / PASSWORD</Text>
-                  <TextInput
-                    style={[styles.formInput, passcodeError ? styles.inputError : null]}
-                    value={passcodeInput}
-                    onChangeText={(val) => {
-                      setPasscodeInput(val);
-                      if (passcodeError) setPasscodeError('');
-                    }}
-                    placeholder="Enter Admin PIN..."
-                    placeholderTextColor="#666666"
-                    secureTextEntry={true}
-                    autoCapitalize="none"
-                    autoFocus={true}
-                    onSubmitEditing={handleAdminLogin}
-                  />
-                  {passcodeError ? (
-                    <Text style={styles.errorText}>{passcodeError}</Text>
-                  ) : null}
-                </View>
-
-                <View style={styles.loginActions}>
+                {/* Form Action Buttons */}
+                <View style={styles.adminFooter}>
                   <TouchableOpacity
-                    style={styles.loginCancelBtn}
-                    onPress={() => setLoginModalVisible(false)}
+                    style={styles.cancelBtn}
+                    onPress={() => setAdminModalVisible(false)}
                   >
-                    <Text style={styles.loginCancelBtnText}>CANCEL</Text>
+                    <Text style={styles.cancelBtnText}>{t.cancel}</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
-                    style={styles.loginSubmitBtn}
-                    onPress={handleAdminLogin}
-                    disabled={verifyingPasscode}
+                    style={styles.saveBtn}
+                    onPress={handleSaveRecipe}
+                    disabled={saving}
                   >
-                    {verifyingPasscode ? (
+                    {saving ? (
                       <ActivityIndicator color="#000000" size="small" />
                     ) : (
-                      <Text style={styles.loginSubmitBtnText}>LOGIN</Text>
+                      <Text style={styles.saveBtnText}>
+                        {editingRecipeId ? t.updateSupabase : t.saveSupabase}
+                      </Text>
                     )}
                   </TouchableOpacity>
                 </View>
               </View>
             </View>
-          </View>
-        </Modal>
-      )}
+          </Modal>
+        )}
 
+        {/* FOOTER */}
+        <View style={styles.footer}>
+          <Text style={styles.footerText}>Gong High's Grog Guide • Bar & Cocktail Specs</Text>
+        </View>
+
+        {/* ADMIN LOGIN MODAL */}
+        {loginModalVisible && (
+          <Modal
+            visible={loginModalVisible}
+            animationType="fade"
+            transparent={true}
+            onRequestClose={() => setLoginModalVisible(false)}
+          >
+            <View style={styles.modalOverlay}>
+              <Pressable style={styles.backdrop} onPress={() => setLoginModalVisible(false)} />
+
+              <View style={styles.loginModalContent}>
+                <View style={styles.loginHeader}>
+                  <Text style={styles.loginTitle}>{t.adminAccessTitle}</Text>
+                  <TouchableOpacity
+                    onPress={() => setLoginModalVisible(false)}
+                    style={styles.modalCloseBtn}
+                  >
+                    <Text style={styles.modalCloseBtnText}>✕</Text>
+                  </TouchableOpacity>
+                </View>
+
+                <View style={styles.loginBody}>
+                  <Text style={styles.loginSubtitle}>
+                    {t.adminAccessSub}
+                  </Text>
+
+                  <View style={styles.formGroup}>
+                    <Text style={styles.formLabel}>{t.adminPinLabel}</Text>
+                    <TextInput
+                      style={[styles.formInput, passcodeError ? styles.inputError : null]}
+                      value={passcodeInput}
+                      onChangeText={(val) => {
+                        setPasscodeInput(val);
+                        if (passcodeError) setPasscodeError('');
+                      }}
+                      placeholder={t.pinPlaceholder}
+                      placeholderTextColor="#666666"
+                      secureTextEntry={true}
+                      autoCapitalize="none"
+                      autoFocus={true}
+                      onSubmitEditing={handleAdminLogin}
+                    />
+                    {passcodeError ? (
+                      <Text style={styles.errorText}>{passcodeError}</Text>
+                    ) : null}
+                  </View>
+
+                  <View style={styles.loginActions}>
+                    <TouchableOpacity
+                      style={styles.loginCancelBtn}
+                      onPress={() => setLoginModalVisible(false)}
+                    >
+                      <Text style={styles.loginCancelBtnText}>{t.cancel}</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                      style={styles.loginSubmitBtn}
+                      onPress={handleAdminLogin}
+                      disabled={verifyingPasscode}
+                    >
+                      {verifyingPasscode ? (
+                        <ActivityIndicator color="#000000" size="small" />
+                      ) : (
+                        <Text style={styles.loginSubmitBtnText}>{t.login}</Text>
+                      )}
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </View>
+            </View>
+          </Modal>
+        )}
       </SafeAreaView>
     </SafeAreaProvider>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: 'transparent',
-  },
   header: {
-    paddingHorizontal: 16,
     paddingTop: 12,
-    paddingBottom: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: '#2A2A2A',
+    paddingBottom: 12
   },
   titleRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 12,
+    marginBottom: 12
   },
   logoBadge: {
-    width: 34,
-    height: 34,
-    borderRadius: 8,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     backgroundColor: '#FFE600',
-    alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 10,
+    alignItems: 'center',
+    marginRight: 10
   },
   logoEmoji: {
-    fontSize: 18,
+    fontSize: 24
   },
   appTitle: {
-    fontSize: 18,
-    fontWeight: '900',
     color: '#FFFFFF',
-    letterSpacing: 0.5,
+    fontSize: 20,
+    fontWeight: '900',
+    letterSpacing: 0.5
   },
   cloudSyncRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
-    marginTop: 1,
+    marginTop: 2
   },
   syncDot: {
     width: 6,
     height: 6,
     borderRadius: 3,
+    marginRight: 6
   },
   syncText: {
-    fontSize: 10,
+    color: '#888888',
+    fontSize: 9,
     fontWeight: '700',
-    color: '#A0A0A0',
+    letterSpacing: 0.5
+  },
+  headerActionsGroup: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginLeft: 6
+  },
+  langTogglePill: {
+    flexDirection: 'row',
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    borderRadius: 8,
+    padding: 2,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.15)'
+  },
+  langToggleSegment: {
+    paddingHorizontal: 8,
+    paddingVertical: 5,
+    borderRadius: 6
+  },
+  langToggleSegmentActive: {
+    backgroundColor: '#FFE600'
+  },
+  langToggleText: {
+    color: '#AAAAAA',
+    fontSize: 11,
+    fontWeight: '700'
+  },
+  langToggleTextActive: {
+    color: '#000000',
+    fontWeight: '900'
+  },
+  adminHeaderBtn: {
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.2)',
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 5
+  },
+  adminHeaderBtnText: {
+    color: '#FFFFFF',
+    fontSize: 11,
+    fontWeight: '700'
+  },
+  adminHeaderBtnActive: {
+    backgroundColor: 'rgba(255, 51, 85, 0.2)',
+    borderWidth: 1,
+    borderColor: '#FF3355',
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 5
+  },
+  adminHeaderBtnActiveText: {
+    color: '#FF3355',
+    fontSize: 11,
+    fontWeight: '700'
   },
   adminAddBtn: {
-    marginLeft: 'auto',
     backgroundColor: '#FFE600',
-    paddingHorizontal: 12,
-    paddingVertical: 7,
-    borderRadius: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 8
   },
   adminAddBtnText: {
-    fontSize: 12,
-    fontWeight: '900',
     color: '#000000',
-    letterSpacing: 0.5,
+    fontSize: 11,
+    fontWeight: '900'
   },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.06)',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.15)',
     paddingHorizontal: 12,
-    height: 52,
-    marginBottom: 4,
+    height: 48
   },
   searchIcon: {
-    fontSize: 18,
-    marginRight: 8,
+    fontSize: 16,
+    marginRight: 8
   },
   searchInput: {
     flex: 1,
     color: '#FFFFFF',
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: '600',
+    paddingVertical: 8
   },
   clearButton: {
-    width: 26,
-    height: 26,
-    borderRadius: 13,
-    backgroundColor: '#333333',
-    alignItems: 'center',
-    justifyContent: 'center',
+    padding: 4
   },
   clearButtonText: {
-    color: '#FFFFFF',
+    color: '#888888',
     fontSize: 14,
-    fontWeight: '900',
-  },
-  filterScroll: {
-    maxHeight: 38,
-  },
-  filterContainer: {
-    gap: 8,
-    paddingRight: 12,
-  },
-  filterChip: {
-    paddingHorizontal: 14,
-    paddingVertical: 7,
-    borderRadius: 6,
-    backgroundColor: 'rgba(255, 255, 255, 0.05)',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.15)',
-  },
-  filterChipActive: {
-    backgroundColor: '#FFE600',
-    borderColor: '#FFE600',
-  },
-  filterChipText: {
-    fontSize: 12,
-    fontWeight: '800',
-    color: '#B0B0B0',
-    letterSpacing: 0.5,
-  },
-  filterChipTextActive: {
-    color: '#000000',
+    fontWeight: 'bold'
   },
   loadingContainer: {
     flex: 1,
-    alignItems: 'center',
     justifyContent: 'center',
-    gap: 12,
+    alignItems: 'center'
   },
   loadingText: {
-    fontSize: 13,
-    fontWeight: '800',
     color: '#FFE600',
+    fontSize: 12,
+    fontWeight: '800',
     letterSpacing: 1,
+    marginTop: 12
   },
   listContainer: {
-    padding: 16,
-    gap: 12,
+    paddingBottom: 24
+  },
+  emptyState: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 48,
+    paddingHorizontal: 24
+  },
+  emptyIcon: {
+    fontSize: 48,
+    marginBottom: 12,
+    opacity: 0.5
+  },
+  emptyTitle: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '800',
+    marginBottom: 6,
+    letterSpacing: 0.5
+  },
+  emptySubtitle: {
+    color: '#888888',
+    fontSize: 13,
+    textAlign: 'center',
+    marginBottom: 16,
+    lineHeight: 18
+  },
+  resetButton: {
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 8
+  },
+  resetButtonText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '700'
   },
   card: {
-    padding: 16,
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    borderRadius: 14,
+    padding: 14,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)'
   },
   cardHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: 12,
+    marginBottom: 10
   },
   cardTitleGroup: {
     flex: 1,
+    marginRight: 8
   },
   cardTopRow: {
     flexDirection: 'row',
     alignItems: 'center',
     flexWrap: 'wrap',
     gap: 8,
-    marginBottom: 4,
-  },
-  cardCategoryBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 6,
-    borderWidth: 1,
-  },
-  cardCategoryText: {
-    fontSize: 10,
-    fontWeight: '900',
-    color: '#FFE600',
-    letterSpacing: 0.8,
+    marginBottom: 4
   },
   cardTitle: {
-    fontSize: 22,
-    fontWeight: '900',
     color: '#FFFFFF',
+    fontSize: 17,
+    fontWeight: '800',
+    letterSpacing: 0.3
+  },
+  cardCategoryBadge: {
+    paddingHorizontal: 7,
+    paddingVertical: 2,
+    borderRadius: 6,
+    borderWidth: 1
+  },
+  cardCategoryText: {
+    fontSize: 9,
+    fontWeight: '900',
+    letterSpacing: 0.5
   },
   cardMetaRow: {
     flexDirection: 'row',
-    gap: 10,
+    alignItems: 'center',
+    gap: 12,
+    marginTop: 2
   },
   cardGlass: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: '#A0A0A0',
+    color: '#AAAAAA',
+    fontSize: 12,
+    fontWeight: '600'
   },
   cardIce: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: '#A0A0A0',
+    color: '#00F0FF',
+    fontSize: 12,
+    fontWeight: '600'
   },
   cardActionRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 8
   },
   cardEditBtn: {
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.15)',
-    paddingHorizontal: 10,
+    backgroundColor: 'rgba(255, 230, 0, 0.15)',
+    paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 6,
+    borderWidth: 1,
+    borderColor: '#FFE600'
   },
   cardEditBtnText: {
-    fontSize: 11,
-    fontWeight: '800',
     color: '#FFE600',
+    fontSize: 10,
+    fontWeight: '800'
   },
   cardArrow: {
-    fontSize: 20,
-    fontWeight: '900',
-    color: '#FFE600',
+    color: '#555555',
+    fontSize: 14
   },
   ingredientsRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 6,
+    gap: 6
   },
-  ingPill: {
+  ingredientPill: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.05)',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.12)',
-    borderRadius: 6,
+    backgroundColor: 'rgba(255, 255, 255, 0.06)',
     paddingHorizontal: 8,
     paddingVertical: 4,
-    gap: 4,
-  },
-  ingPillMatched: {
-    backgroundColor: '#FFE600',
-    borderColor: '#FFE600',
-  },
-  ingAmount: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#999999',
-  },
-  ingName: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#D0D0D0',
-  },
-  ingMatchedText: {
-    color: '#000000',
-    fontWeight: '900',
-  },
-  emptyState: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 48,
-    paddingHorizontal: 24,
-  },
-  emptyIcon: {
-    fontSize: 48,
-    marginBottom: 12,
-  },
-  emptyTitle: {
-    fontSize: 18,
-    fontWeight: '900',
-    color: '#FFFFFF',
-    marginBottom: 8,
-  },
-  emptySubtitle: {
-    fontSize: 14,
-    color: '#888888',
-    textAlign: 'center',
-    marginBottom: 20,
-  },
-  resetButton: {
-    backgroundColor: '#FFE600',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
     borderRadius: 6,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.08)'
   },
-  resetButtonText: {
-    color: '#000000',
-    fontWeight: '900',
-    fontSize: 13,
+  ingredientPillMatched: {
+    backgroundColor: 'rgba(255, 230, 0, 0.2)',
+    borderColor: '#FFE600'
   },
-
-  /* MODAL OVERLAY STYLES */
+  ingredientPillName: {
+    color: '#DDDDDD',
+    fontSize: 11,
+    fontWeight: '600',
+    marginRight: 4
+  },
+  ingredientPillNameMatched: {
+    color: '#FFE600',
+    fontWeight: '800'
+  },
+  ingredientPillAmount: {
+    color: '#888888',
+    fontSize: 10,
+    fontWeight: '500'
+  },
+  ingredientPillAmountMatched: {
+    color: '#FFFFFF'
+  },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.75)',
     justifyContent: 'flex-end',
+    backgroundColor: 'rgba(0, 0, 0, 0.75)'
   },
   backdrop: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFillObject
   },
   modalContent: {
+    backgroundColor: '#161618',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.15)',
     maxHeight: '90%',
-    flexDirection: 'column',
+    padding: 20
   },
   modalHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    padding: 20,
+    marginBottom: 16,
+    paddingBottom: 14,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255, 255, 255, 0.12)',
-    backgroundColor: 'rgba(25, 25, 28, 0.90)',
-    borderTopLeftRadius: 6,
-    borderTopRightRadius: 6,
+    borderBottomColor: 'rgba(255, 255, 255, 0.1)'
   },
-  modalTitleGroup: {
-    flex: 1,
-    paddingRight: 12,
-  },
-  categoryBadge: {
-    alignSelf: 'flex-start',
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 6,
-    borderWidth: 1,
-    marginBottom: 6,
-  },
-  categoryText: {
-    fontSize: 10,
-    fontWeight: '900',
-    color: '#FFE600',
-    letterSpacing: 1,
+  modalTopRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginBottom: 4
   },
   modalTitle: {
-    fontSize: 32,
-    fontWeight: '900',
     color: '#FFFFFF',
+    fontSize: 22,
+    fontWeight: '900',
+    letterSpacing: 0.3
   },
   modalMetaRow: {
     flexDirection: 'row',
-    gap: 12,
-    marginTop: 4,
+    alignItems: 'center',
+    gap: 14,
+    marginTop: 4
   },
   modalGlass: {
-    fontSize: 15,
-    fontWeight: '700',
-    color: '#FFE600',
+    color: '#CCCCCC',
+    fontSize: 13,
+    fontWeight: '600'
   },
   modalIce: {
-    fontSize: 15,
-    fontWeight: '700',
     color: '#00F0FF',
+    fontSize: 13,
+    fontWeight: '600'
   },
   modalCloseBtn: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: '#FFE600',
-    alignItems: 'center',
-    justifyContent: 'center',
+    padding: 6
   },
   modalCloseBtnText: {
+    color: '#888888',
     fontSize: 18,
-    fontWeight: '900',
-    color: '#000000',
+    fontWeight: 'bold'
   },
   modalBody: {
-    paddingHorizontal: 20,
-    paddingVertical: 16,
+    flex: 1
   },
   modalBodyContent: {
-    gap: 20,
-    paddingBottom: 20,
+    paddingBottom: 16
   },
   section: {
-    gap: 8,
+    marginBottom: 20
   },
   sectionHeader: {
-    fontSize: 12,
-    fontWeight: '900',
     color: '#FFE600',
-    letterSpacing: 1.5,
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255, 255, 255, 0.12)',
-    paddingBottom: 4,
+    fontSize: 11,
+    fontWeight: '900',
+    letterSpacing: 1.2,
+    marginBottom: 8
   },
   recipeRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    backgroundColor: 'rgba(255, 255, 255, 0.04)',
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    marginBottom: 6,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.15)',
-    borderRadius: 6,
-    padding: 14,
+    borderColor: 'rgba(255, 255, 255, 0.06)'
   },
   recipeIngName: {
-    fontSize: 20,
-    fontWeight: '900',
     color: '#FFFFFF',
-    flex: 1,
+    fontSize: 14,
+    fontWeight: '600'
   },
   recipeIngAmount: {
-    fontSize: 20,
-    fontWeight: '900',
     color: '#FFE600',
-    marginLeft: 12,
+    fontSize: 13,
+    fontWeight: '700'
   },
   methodBox: {
-    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    backgroundColor: 'rgba(255, 255, 255, 0.04)',
+    padding: 14,
+    borderRadius: 10,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.15)',
-    borderRadius: 6,
-    padding: 16,
+    borderColor: 'rgba(255, 255, 255, 0.06)'
   },
   methodText: {
-    fontSize: 18,
-    fontWeight: '500',
-    color: '#F0F0F0',
-    lineHeight: 28,
+    color: '#DDDDDD',
+    fontSize: 14,
+    lineHeight: 22
   },
   garnishBox: {
-    backgroundColor: 'rgba(38, 34, 0, 0.65)',
-    borderWidth: 1,
-    borderColor: '#FFE600',
-    borderRadius: 6,
-    padding: 16,
+    backgroundColor: 'rgba(255, 255, 255, 0.04)',
+    padding: 12,
+    borderRadius: 8
   },
   garnishText: {
-    fontSize: 18,
-    fontWeight: '800',
-    color: '#FFE600',
+    color: '#FFAA00',
+    fontSize: 13,
+    fontWeight: '600'
   },
   modalFooter: {
-    padding: 16,
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(255, 255, 255, 0.12)',
-    backgroundColor: 'rgba(20, 20, 24, 0.90)',
     flexDirection: 'row',
-    gap: 12,
+    gap: 10,
+    paddingTop: 14,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(255, 255, 255, 0.1)'
   },
   modalEditBtn: {
     flex: 1,
-    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    backgroundColor: 'rgba(255, 230, 0, 0.15)',
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.15)',
-    paddingVertical: 14,
-    borderRadius: 6,
-    alignItems: 'center',
+    borderColor: '#FFE600',
+    paddingVertical: 12,
+    borderRadius: 10,
+    alignItems: 'center'
   },
   modalEditBtnText: {
-    fontSize: 15,
-    fontWeight: '900',
     color: '#FFE600',
+    fontSize: 13,
+    fontWeight: '800'
   },
   modalDeleteBtn: {
     flex: 1,
-    backgroundColor: 'rgba(51, 17, 17, 0.7)',
+    backgroundColor: 'rgba(255, 51, 85, 0.15)',
     borderWidth: 1,
-    borderColor: '#FF4444',
-    paddingVertical: 14,
-    borderRadius: 6,
-    alignItems: 'center',
+    borderColor: '#FF3355',
+    paddingVertical: 12,
+    borderRadius: 10,
+    alignItems: 'center'
   },
   modalDeleteBtnText: {
-    fontSize: 15,
-    fontWeight: '900',
-    color: '#FF4444',
+    color: '#FF3355',
+    fontSize: 13,
+    fontWeight: '800'
   },
-
-  /* ADMIN MODAL STYLES */
   adminHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 20,
-    backgroundColor: 'rgba(25, 25, 28, 0.90)',
+    marginBottom: 16,
+    paddingBottom: 12,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255, 255, 255, 0.12)',
-    borderTopLeftRadius: 6,
-    borderTopRightRadius: 6,
+    borderBottomColor: 'rgba(255, 255, 255, 0.1)'
   },
   adminTitle: {
-    fontSize: 20,
-    fontWeight: '900',
     color: '#FFE600',
-    letterSpacing: 0.5,
+    fontSize: 16,
+    fontWeight: '900',
+    letterSpacing: 0.5
   },
   adminBody: {
-    padding: 20,
+    flex: 1
   },
   adminBodyContent: {
-    gap: 16,
-    paddingBottom: 24,
+    paddingBottom: 16
   },
   formGroup: {
-    gap: 6,
+    marginBottom: 14
   },
   formRow: {
     flexDirection: 'row',
-    gap: 12,
+    justifyContent: 'space-between'
   },
   formLabel: {
-    fontSize: 11,
-    fontWeight: '900',
-    color: '#FFE600',
-    letterSpacing: 1,
+    color: '#888888',
+    fontSize: 10,
+    fontWeight: '800',
+    letterSpacing: 0.8,
+    marginBottom: 6
   },
   formInput: {
-    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    backgroundColor: 'rgba(255, 255, 255, 0.06)',
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.15)',
-    borderRadius: 6,
+    borderRadius: 8,
+    color: '#FFFFFF',
     paddingHorizontal: 12,
     paddingVertical: 10,
-    color: '#FFFFFF',
-    fontSize: 15,
-    fontWeight: '600',
+    fontSize: 14
   },
   textAreaInput: {
     height: 90,
-    textAlignVertical: 'top',
+    textAlignVertical: 'top'
   },
-  formSectionHeaderRow: {
+  categoryPickerRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 4,
+    flexWrap: 'wrap',
+    gap: 6
   },
-  addIngBtn: {
-    backgroundColor: 'rgba(255, 255, 255, 0.08)',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.12)',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 6,
-  },
-  addIngBtnText: {
-    fontSize: 11,
-    fontWeight: '800',
-    color: '#FFE600',
-  },
-  ingFormRow: {
-    flexDirection: 'row',
-    gap: 8,
-    alignItems: 'center',
-    marginBottom: 6,
-  },
-  removeIngBtn: {
-    width: 36,
-    height: 36,
-    borderRadius: 6,
-    backgroundColor: 'rgba(51, 17, 17, 0.8)',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  removeIngBtnText: {
-    color: '#FF4444',
-    fontSize: 16,
-    fontWeight: '900',
-  },
-  saveBtn: {
-    backgroundColor: '#FFE600',
-    paddingVertical: 16,
-    borderRadius: 6,
-    alignItems: 'center',
-  },
-  saveBtnText: {
-    fontSize: 16,
-    fontWeight: '900',
-    color: '#000000',
-    letterSpacing: 1,
-  },
-
-  /* FOOTER STYLES */
-  footer: {
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(255, 255, 255, 0.08)',
-  },
-  discreetLockBtn: {
-    padding: 6,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  discreetLockText: {
-    fontSize: 14,
-    color: '#444444',
-  },
-  logoutBtn: {
+  categoryPickerOption: {
     backgroundColor: 'rgba(255, 255, 255, 0.05)',
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.15)',
-    paddingHorizontal: 14,
+    paddingHorizontal: 10,
     paddingVertical: 6,
-    borderRadius: 6,
+    borderRadius: 8
   },
-  logoutBtnText: {
-    fontSize: 12,
-    fontWeight: '800',
+  categoryPickerOptionSelected: {
+    backgroundColor: '#FFE600',
+    borderColor: '#FFE600'
+  },
+  categoryPickerText: {
+    color: '#888888',
+    fontSize: 11,
+    fontWeight: '700'
+  },
+  categoryPickerTextSelected: {
+    color: '#000000',
+    fontWeight: '900'
+  },
+  ingredientHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
+  ingredientFormRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8
+  },
+  removeIngBtn: {
+    padding: 8
+  },
+  removeIngBtnText: {
+    color: '#FF3355',
+    fontSize: 14,
+    fontWeight: 'bold'
+  },
+  addIngRowBtn: {
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.15)',
+    paddingVertical: 8,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 4
+  },
+  addIngRowBtnText: {
     color: '#FFE600',
-    letterSpacing: 0.5,
+    fontSize: 11,
+    fontWeight: '800'
   },
-
-  /* LOGIN MODAL STYLES */
+  adminFooter: {
+    flexDirection: 'row',
+    gap: 10,
+    paddingTop: 14,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(255, 255, 255, 0.1)'
+  },
+  cancelBtn: {
+    flex: 1,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    paddingVertical: 12,
+    borderRadius: 10,
+    alignItems: 'center'
+  },
+  cancelBtnText: {
+    color: '#FFFFFF',
+    fontSize: 13,
+    fontWeight: '700'
+  },
+  saveBtn: {
+    flex: 1,
+    backgroundColor: '#FFE600',
+    paddingVertical: 12,
+    borderRadius: 10,
+    alignItems: 'center'
+  },
+  saveBtnText: {
+    color: '#000000',
+    fontSize: 13,
+    fontWeight: '900'
+  },
+  footer: {
+    paddingVertical: 12,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  footerText: {
+    color: '#444444',
+    fontSize: 11,
+    fontWeight: '600'
+  },
   loginModalContent: {
-    marginHorizontal: 16,
-    marginBottom: 40,
-    borderRadius: 6,
-    borderTopWidth: 4,
-    borderColor: '#FFE600',
-    overflow: 'hidden',
+    backgroundColor: '#1A1A1E',
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.15)',
+    width: '90%',
+    maxWidth: 400,
+    alignSelf: 'center',
+    padding: 20
   },
   loginHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 18,
-    backgroundColor: 'rgba(25, 25, 28, 0.90)',
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255, 255, 255, 0.12)',
+    marginBottom: 12
   },
   loginTitle: {
-    fontSize: 18,
-    fontWeight: '900',
     color: '#FFE600',
-    letterSpacing: 0.5,
+    fontSize: 16,
+    fontWeight: '900',
+    letterSpacing: 0.5
   },
   loginBody: {
-    padding: 20,
-    gap: 16,
+    marginTop: 4
   },
   loginSubtitle: {
-    fontSize: 14,
     color: '#AAAAAA',
-    lineHeight: 20,
+    fontSize: 12,
+    lineHeight: 18,
+    marginBottom: 16
   },
   inputError: {
-    borderColor: '#FF4444',
+    borderColor: '#FF3355'
   },
   errorText: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#FF4444',
-    marginTop: 2,
+    color: '#FF3355',
+    fontSize: 11,
+    fontWeight: '600',
+    marginTop: 4
   },
   loginActions: {
     flexDirection: 'row',
-    gap: 12,
-    marginTop: 8,
+    gap: 10,
+    marginTop: 16
   },
   loginCancelBtn: {
     flex: 1,
-    backgroundColor: 'rgba(255, 255, 255, 0.08)',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.15)',
-    paddingVertical: 12,
-    borderRadius: 6,
-    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    paddingVertical: 10,
+    borderRadius: 8,
+    alignItems: 'center'
   },
   loginCancelBtnText: {
-    fontSize: 14,
-    fontWeight: '800',
-    color: '#888888',
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '700'
   },
   loginSubmitBtn: {
     flex: 1,
     backgroundColor: '#FFE600',
-    paddingVertical: 12,
-    borderRadius: 6,
-    alignItems: 'center',
+    paddingVertical: 10,
+    borderRadius: 8,
+    alignItems: 'center'
   },
   loginSubmitBtnText: {
-    fontSize: 14,
-    fontWeight: '900',
     color: '#000000',
-    letterSpacing: 0.5,
-  },
-  categoryPickerRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-    marginTop: 4,
-  },
-  categoryPickerOption: {
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 6,
-    backgroundColor: 'rgba(255, 255, 255, 0.05)',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.15)',
-  },
-  categoryPickerOptionSelected: {
-    backgroundColor: '#FFE600',
-    borderColor: '#FFE600',
-  },
-  categoryPickerText: {
-    fontSize: 11,
-    fontWeight: '800',
-    color: '#888888',
-    letterSpacing: 0.5,
-  },
-  categoryPickerTextSelected: {
-    color: '#000000',
-    fontWeight: '900',
-  },
+    fontSize: 12,
+    fontWeight: '900'
+  }
 });
-

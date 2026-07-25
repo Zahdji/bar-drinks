@@ -20,14 +20,14 @@ export interface Cocktail {
 export const initialRecipes: Cocktail[] = [];
 
 // Supabase API Helpers
-export async function fetchRecipesFromSupabase(): Promise<{ data: Cocktail[] | null; error: any }> {
+export async function fetchRecipesFromSupabase(tableName: string = 'cocktails'): Promise<{ data: Cocktail[] | null; error: any }> {
   try {
     let { data, error } = await supabase
-      .from('cocktails')
+      .from(tableName)
       .select('*')
       .order('created_at', { ascending: false });
 
-    if (error) {
+    if (error && tableName === 'cocktails') {
       // Fallback to legacy recipes table
       const fallback = await supabase
         .from('recipes')
@@ -38,7 +38,7 @@ export async function fetchRecipesFromSupabase(): Promise<{ data: Cocktail[] | n
     }
 
     if (error) {
-      console.warn('Supabase fetch error:', error.message);
+      console.warn(`Supabase fetch error on ${tableName}:`, error.message);
       return { data: null, error };
     }
 
@@ -60,7 +60,7 @@ export async function fetchRecipesFromSupabase(): Promise<{ data: Cocktail[] | n
 
     return { data: formatted, error: null };
   } catch (err) {
-    console.warn('Supabase request failed:', err);
+    console.warn(`Supabase request failed on ${tableName}:`, err);
     return { data: null, error: err };
   }
 }
