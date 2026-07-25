@@ -29,6 +29,18 @@ import {
 
 export type Language = 'en' | 'zh';
 
+export const formatPrice = (price?: string) => {
+  if (!price || !price.trim()) return '';
+  const trimmed = price.trim();
+  if (trimmed.toUpperCase().startsWith('NT$')) {
+    return trimmed.toUpperCase().replace(/^NT\$\s*/, 'NT$ ');
+  }
+  if (trimmed.startsWith('$')) {
+    return `NT$ ${trimmed.slice(1).trim()}`;
+  }
+  return `NT$ ${trimmed}`;
+};
+
 export const i18n = {
   en: {
     appTitle: "Gong High's Grog Guide",
@@ -44,6 +56,7 @@ export const i18n = {
     resetSearch: "RESET SEARCH",
     glass: "Glass",
     ice: "Ice",
+    price: "Price",
     edit: "EDIT",
     ingredients: "INGREDIENTS",
     method: "PREPARATION METHOD",
@@ -59,6 +72,8 @@ export const i18n = {
     glassPlaceholder: "e.g. Highball, Coupette...",
     iceLabel: "ICE TYPE",
     icePlaceholder: "e.g. Full ice, Crushed, Cubes...",
+    priceLabel: "PRICE (NT$)",
+    pricePlaceholder: "e.g. 350",
     garnishLabel: "GARNISH",
     garnishPlaceholder: "e.g. Lime wedge, Mint sprig...",
     ingredientsLabel: "INGREDIENTS & DOSAGES",
@@ -100,6 +115,7 @@ export const i18n = {
     resetSearch: "重設搜尋",
     glass: "杯型",
     ice: "冰量",
+    price: "價格",
     edit: "編輯",
     ingredients: "配方原料",
     method: "調製方法",
@@ -115,6 +131,8 @@ export const i18n = {
     glassPlaceholder: "例如：高球杯、可口杯...",
     iceLabel: "冰塊類型",
     icePlaceholder: "例如：滿冰、碎冰、去冰...",
+    priceLabel: "價格 (NT$)",
+    pricePlaceholder: "例如：350",
     garnishLabel: "裝飾裝扮",
     garnishPlaceholder: "例如：檸檬角、薄荷葉...",
     ingredientsLabel: "配方成分與用量",
@@ -219,6 +237,7 @@ export default function App() {
   const [formCategory, setFormCategory] = useState('');
   const [formGlass, setFormGlass] = useState('');
   const [formIce, setFormIce] = useState('');
+  const [formPrice, setFormPrice] = useState('');
   const [formGarnish, setFormGarnish] = useState('');
   const [formMethod, setFormMethod] = useState('');
   const [formIngredients, setFormIngredients] = useState<Ingredient[]>([
@@ -265,7 +284,7 @@ export default function App() {
     }
   }, [language]);
 
-  // Filter recipes live by name, ingredient, glass, ice, category, or instructions
+  // Filter recipes live by name, ingredient, glass, ice, price, category, or instructions
   const filteredRecipes = recipesList.filter((recipe) => {
     const q = searchQuery.toLowerCase().trim();
     if (!q) return true;
@@ -278,10 +297,11 @@ export default function App() {
     );
     const matchesGlass = (recipe.glass || '').toLowerCase().includes(q);
     const matchesIce = (recipe.ice || '').toLowerCase().includes(q);
+    const matchesPrice = (recipe.price || '').toLowerCase().includes(q) || formatPrice(recipe.price).toLowerCase().includes(q);
     const matchesMethod = (recipe.method || '').toLowerCase().includes(q);
     const matchesGarnish = (recipe.garnish || '').toLowerCase().includes(q);
 
-    return matchesName || matchesCategory || matchesIngredient || matchesGlass || matchesIce || matchesMethod || matchesGarnish;
+    return matchesName || matchesCategory || matchesIngredient || matchesGlass || matchesIce || matchesPrice || matchesMethod || matchesGarnish;
   });
 
   const isIngredientMatch = (ingName: string) => {
@@ -319,6 +339,7 @@ export default function App() {
       setFormCategory(cocktail.category || '');
       setFormGlass(cocktail.glass || '');
       setFormIce(cocktail.ice || '');
+      setFormPrice(cocktail.price || '');
       setFormGarnish(cocktail.garnish || '');
       setFormMethod(cocktail.method || '');
       setFormIngredients(
@@ -332,6 +353,7 @@ export default function App() {
       setFormCategory('');
       setFormGlass('');
       setFormIce('');
+      setFormPrice('');
       setFormGarnish('');
       setFormMethod('');
       setFormIngredients([{ name: '', amount: '' }]);
@@ -371,11 +393,13 @@ export default function App() {
     );
 
     setSaving(true);
+    const tableName = language === 'zh' ? 'cocktailsZH' : 'cocktails';
     const payload = {
       name: formName.trim(),
       category: formCategory.trim(),
       glass: formGlass.trim(),
       ice: formIce.trim(),
+      price: formPrice.trim(),
       ingredients: cleanIngredients,
       garnish: formGarnish.trim(),
       method: formMethod.trim()
@@ -383,7 +407,7 @@ export default function App() {
 
     if (editingRecipeId) {
       // Update in Supabase
-      const { error } = await updateRecipeInSupabase(editingRecipeId, payload);
+      const { error } = await updateRecipeInSupabase(editingRecipeId, payload, tableName);
       if (error) {
         setRecipesList((prev) =>
           prev.map((item) =>
@@ -395,7 +419,7 @@ export default function App() {
       }
     } else {
       // Create in Supabase
-      const { data, error } = await createRecipeInSupabase(payload);
+      const { data, error } = await createRecipeInSupabase(payload, tableName);
       if (data) {
         await loadRecipes(language);
       } else {
@@ -614,13 +638,16 @@ export default function App() {
                         );
                       })() : null}
                     </View>
-                    {(item.glass?.trim() || item.ice?.trim()) ? (
+                    {(item.glass?.trim() || item.ice?.trim() || item.price?.trim()) ? (
                       <View style={styles.cardMetaRow}>
                         {item.glass?.trim() ? (
                           <Text style={styles.cardGlass}>🥃 {t.glass}: {item.glass.trim()}</Text>
                         ) : null}
                         {item.ice?.trim() ? (
                           <Text style={styles.cardIce}>🧊 {t.ice}: {item.ice.trim()}</Text>
+                        ) : null}
+                        {item.price?.trim() ? (
+                          <Text style={styles.cardPrice}>💰 {formatPrice(item.price)}</Text>
                         ) : null}
                       </View>
                     ) : null}
@@ -706,13 +733,16 @@ export default function App() {
                       })() : null}
                     </View>
 
-                    {(selectedCocktail.glass?.trim() || selectedCocktail.ice?.trim()) ? (
+                    {(selectedCocktail.glass?.trim() || selectedCocktail.ice?.trim() || selectedCocktail.price?.trim()) ? (
                       <View style={styles.modalMetaRow}>
                         {selectedCocktail.glass?.trim() ? (
                           <Text style={styles.modalGlass}>🥃 {t.glass}: {selectedCocktail.glass.trim()}</Text>
                         ) : null}
                         {selectedCocktail.ice?.trim() ? (
                           <Text style={styles.modalIce}>🧊 {t.ice}: {selectedCocktail.ice.trim()}</Text>
+                        ) : null}
+                        {selectedCocktail.price?.trim() ? (
+                          <Text style={styles.modalPrice}>💰 {formatPrice(selectedCocktail.price)}</Text>
                         ) : null}
                       </View>
                     ) : null}
@@ -865,7 +895,7 @@ export default function App() {
                   </View>
 
                   <View style={styles.formRow}>
-                    <View style={[styles.formGroup, { flex: 1, marginRight: 8 }]}>
+                    <View style={[styles.formGroup, { flex: 1, marginRight: 4 }]}>
                       <Text style={styles.formLabel}>{t.glassLabel}</Text>
                       <TextInput
                         style={styles.formInput}
@@ -876,7 +906,7 @@ export default function App() {
                       />
                     </View>
 
-                    <View style={[styles.formGroup, { flex: 1, marginLeft: 8 }]}>
+                    <View style={[styles.formGroup, { flex: 1, marginHorizontal: 4 }]}>
                       <Text style={styles.formLabel}>{t.iceLabel}</Text>
                       <TextInput
                         style={styles.formInput}
@@ -885,6 +915,20 @@ export default function App() {
                         placeholder={t.icePlaceholder}
                         placeholderTextColor="#666666"
                       />
+                    </View>
+
+                    <View style={[styles.formGroup, { flex: 1, marginLeft: 4 }]}>
+                      <Text style={styles.formLabel}>{t.priceLabel}</Text>
+                      <View style={styles.priceInputContainer}>
+                        <Text style={styles.pricePrefix}>NT$</Text>
+                        <TextInput
+                          style={styles.priceInput}
+                          value={formPrice}
+                          onChangeText={setFormPrice}
+                          placeholder={t.pricePlaceholder}
+                          placeholderTextColor="#666666"
+                        />
+                      </View>
                     </View>
                   </View>
 
@@ -1327,6 +1371,11 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '600'
   },
+  cardPrice: {
+    color: '#FFE600',
+    fontSize: 12,
+    fontWeight: '700'
+  },
   cardActionRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -1440,6 +1489,33 @@ const styles = StyleSheet.create({
     color: '#00F0FF',
     fontSize: 13,
     fontWeight: '600'
+  },
+  modalPrice: {
+    color: '#FFE600',
+    fontSize: 13,
+    fontWeight: '700'
+  },
+  priceInputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.06)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.15)',
+    borderRadius: 8,
+    paddingLeft: 8
+  },
+  pricePrefix: {
+    color: '#FFE600',
+    fontSize: 12,
+    fontWeight: '800',
+    marginRight: 2
+  },
+  priceInput: {
+    flex: 1,
+    color: '#FFFFFF',
+    paddingVertical: 10,
+    paddingRight: 6,
+    fontSize: 13
   },
   modalCloseBtn: {
     padding: 6
