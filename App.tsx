@@ -11,7 +11,8 @@ import {
   Pressable,
   Keyboard,
   ActivityIndicator,
-  Alert
+  Alert,
+  Image
 } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
@@ -453,23 +454,29 @@ export default function App() {
         <View style={styles.header}>
           <View style={styles.titleRow}>
             <View style={styles.logoBadge}>
-              <Text style={styles.logoEmoji}>🍸</Text>
+              <Image
+                source={require('./GHLogo.png')}
+                style={styles.logoImage}
+                resizeMode="contain"
+              />
             </View>
             <View style={{ flex: 1 }}>
               <Text style={styles.appTitle} numberOfLines={1} adjustsFontSizeToFit>
                 {t.appTitle}
               </Text>
-              <View style={styles.cloudSyncRow}>
-                <View
-                  style={[
-                    styles.syncDot,
-                    { backgroundColor: isCloudConnected ? '#00FF66' : '#FF9900' }
-                  ]}
-                />
-                <Text style={styles.syncText}>
-                  {isCloudConnected ? t.supabaseLive : t.localCache}
-                </Text>
-              </View>
+              {isAdmin && (
+                <View style={styles.cloudSyncRow}>
+                  <View
+                    style={[
+                      styles.syncDot,
+                      { backgroundColor: isCloudConnected ? '#00FF66' : '#FF9900' }
+                    ]}
+                  />
+                  <Text style={styles.syncText}>
+                    {isCloudConnected ? t.supabaseLive : t.localCache}
+                  </Text>
+                </View>
+              )}
             </View>
 
             {/* Header Right Controls: Language Toggle & Explicit Admin Button */}
@@ -1071,14 +1078,15 @@ const styles = StyleSheet.create({
   logoBadge: {
     width: 44,
     height: 44,
-    borderRadius: 22,
-    backgroundColor: '#FFE600',
+    borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 10
+    marginRight: 10,
+    overflow: 'hidden'
   },
-  logoEmoji: {
-    fontSize: 24
+  logoImage: {
+    width: 44,
+    height: 44
   },
   appTitle: {
     color: '#FFFFFF',
