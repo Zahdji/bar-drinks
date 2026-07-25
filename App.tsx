@@ -452,6 +452,7 @@ export default function App() {
 
         {/* Header Bar */}
         <View style={styles.header}>
+          {/* Row 1: Logo & Full Title */}
           <View style={styles.titleRow}>
             <View style={styles.logoBadge}>
               <Image
@@ -460,8 +461,8 @@ export default function App() {
                 resizeMode="contain"
               />
             </View>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.appTitle} numberOfLines={1} adjustsFontSizeToFit>
+            <View style={styles.titleTextContainer}>
+              <Text style={styles.appTitle}>
                 {t.appTitle}
               </Text>
               {isAdmin && (
@@ -478,61 +479,61 @@ export default function App() {
                 </View>
               )}
             </View>
+          </View>
 
-            {/* Header Right Controls: Language Toggle & Explicit Admin Button */}
-            <View style={styles.headerActionsGroup}>
-              {/* EN / 繁中 Language Toggle Pill */}
-              <View style={styles.langTogglePill}>
-                <TouchableOpacity
-                  style={[styles.langToggleSegment, language === 'en' && styles.langToggleSegmentActive]}
-                  onPress={() => handleLanguageChange('en')}
-                  activeOpacity={0.8}
-                >
-                  <Text style={[styles.langToggleText, language === 'en' && styles.langToggleTextActive]}>EN</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[styles.langToggleSegment, language === 'zh' && styles.langToggleSegmentActive]}
-                  onPress={() => handleLanguageChange('zh')}
-                  activeOpacity={0.8}
-                >
-                  <Text style={[styles.langToggleText, language === 'zh' && styles.langToggleTextActive]}>繁中</Text>
-                </TouchableOpacity>
-              </View>
-
-              {/* Explicit Text Admin Button (Top Right) */}
-              {isAdmin ? (
-                <TouchableOpacity
-                  style={styles.adminHeaderBtnActive}
-                  onPress={() => setIsAdmin(false)}
-                  activeOpacity={0.8}
-                >
-                  <Text style={styles.adminHeaderBtnActiveText}>{t.adminLogout}</Text>
-                </TouchableOpacity>
-              ) : (
-                <TouchableOpacity
-                  style={styles.adminHeaderBtn}
-                  onPress={() => {
-                    setPasscodeInput('');
-                    setPasscodeError('');
-                    setLoginModalVisible(true);
-                  }}
-                  activeOpacity={0.8}
-                >
-                  <Text style={styles.adminHeaderBtnText}>{t.adminLogin}</Text>
-                </TouchableOpacity>
-              )}
-
-              {/* Admin Add Drink Button if logged in */}
-              {isAdmin && (
-                <TouchableOpacity
-                  style={styles.adminAddBtn}
-                  onPress={() => openAdminForm()}
-                  activeOpacity={0.8}
-                >
-                  <Text style={styles.adminAddBtnText}>{t.addDrink}</Text>
-                </TouchableOpacity>
-              )}
+          {/* Row 2: Action Controls (Language Toggle, Admin Login/Logout, Add Drink) */}
+          <View style={styles.headerActionsGroup}>
+            {/* EN / 繁中 Language Toggle Pill */}
+            <View style={styles.langTogglePill}>
+              <TouchableOpacity
+                style={[styles.langToggleSegment, language === 'en' && styles.langToggleSegmentActive]}
+                onPress={() => handleLanguageChange('en')}
+                activeOpacity={0.8}
+              >
+                <Text style={[styles.langToggleText, language === 'en' && styles.langToggleTextActive]}>EN</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.langToggleSegment, language === 'zh' && styles.langToggleSegmentActive]}
+                onPress={() => handleLanguageChange('zh')}
+                activeOpacity={0.8}
+              >
+                <Text style={[styles.langToggleText, language === 'zh' && styles.langToggleTextActive]}>繁中</Text>
+              </TouchableOpacity>
             </View>
+
+            {/* Explicit Text Admin Button */}
+            {isAdmin ? (
+              <TouchableOpacity
+                style={styles.adminHeaderBtnActive}
+                onPress={() => setIsAdmin(false)}
+                activeOpacity={0.8}
+              >
+                <Text style={styles.adminHeaderBtnActiveText}>{t.adminLogout}</Text>
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity
+                style={styles.adminHeaderBtn}
+                onPress={() => {
+                  setPasscodeInput('');
+                  setPasscodeError('');
+                  setLoginModalVisible(true);
+                }}
+                activeOpacity={0.8}
+              >
+                <Text style={styles.adminHeaderBtnText}>{t.adminLogin}</Text>
+              </TouchableOpacity>
+            )}
+
+            {/* Admin Add Drink Button if logged in */}
+            {isAdmin && (
+              <TouchableOpacity
+                style={styles.adminAddBtn}
+                onPress={() => openAdminForm()}
+                activeOpacity={0.8}
+              >
+                <Text style={styles.adminAddBtnText}>{t.addDrink}</Text>
+              </TouchableOpacity>
+            )}
           </View>
 
           {/* Prominent Search Input */}
@@ -1073,7 +1074,7 @@ const styles = StyleSheet.create({
   titleRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 12
+    marginBottom: 8
   },
   logoBadge: {
     width: 44,
@@ -1082,17 +1083,24 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 10,
-    overflow: 'hidden'
+    overflow: 'hidden',
+    flexShrink: 0
   },
   logoImage: {
     width: 44,
     height: 44
   },
+  titleTextContainer: {
+    justifyContent: 'center',
+    flexShrink: 0
+  },
   appTitle: {
     color: '#FFFFFF',
     fontSize: 20,
     fontWeight: '900',
-    letterSpacing: 0.5
+    letterSpacing: 0.5,
+    // @ts-ignore
+    whiteSpace: 'nowrap'
   },
   cloudSyncRow: {
     flexDirection: 'row',
@@ -1114,8 +1122,10 @@ const styles = StyleSheet.create({
   headerActionsGroup: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    marginLeft: 6
+    flexWrap: 'wrap',
+    gap: 8,
+    marginTop: 2,
+    marginBottom: 12
   },
   langTogglePill: {
     flexDirection: 'row',
