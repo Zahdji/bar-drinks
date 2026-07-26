@@ -390,7 +390,7 @@ def main():
 
     unique_texts = set()
     for row in all_cocktails_data:
-        for field in ['category', 'glass', 'ice', 'instructions', 'garnish']:
+        for field in ['category', 'glass', 'ice', 'instructions']:
             v = row.get(field, '').strip()
             if v: unique_texts.add(v)
         ing_parsed = parse_ingredients_field(row.get('ingredients', ''))
@@ -421,7 +421,6 @@ def main():
         glass = row.get('glass', '').strip() or None
         ice = row.get('ice', '').strip() or None
         instructions = row.get('instructions', '').strip() or None
-        garnish = row.get('garnish', '').strip() or None
         ingredients_parsed = parse_ingredients_field(row.get('ingredients', ''))
 
         menu_match = get_menu_match(name)
@@ -440,7 +439,6 @@ def main():
             'ice': ice,
             'ingredients': ingredients_parsed,
             'instructions': instructions,
-            'garnish': garnish,
             'price': price_val
         }
 
@@ -455,7 +453,6 @@ def main():
         glass_zh = translate_single_text(glass) if glass else None
         ice_zh = translate_single_text(ice) if ice else None
         instructions_zh = translate_single_text(instructions) if instructions else None
-        garnish_zh = translate_single_text(garnish) if garnish else None
 
         ingredients_zh = []
         for ing in ingredients_parsed:
@@ -472,7 +469,6 @@ def main():
             'ice': ice_zh,
             'ingredients': ingredients_zh,
             'instructions': instructions_zh,
-            'garnish': garnish_zh,
             'price': price_val
         }
 

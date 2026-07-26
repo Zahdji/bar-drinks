@@ -288,8 +288,7 @@ def main():
                 'ice': csv_r.get('ice', '').strip() or csv_r.get('Ice', '').strip() or '',
                 'price': price_val,
                 'ingredients': ingredients,
-                'instructions': csv_r.get('instructions', '').strip() or csv_r.get('Method', '').strip() or '',
-                'garnish': csv_r.get('garnish', '').strip() or csv_r.get('Garnish', '').strip() or ''
+                'instructions': csv_r.get('instructions', '').strip() or csv_r.get('Method', '').strip() or ''
             }
             supabase_insert('cocktails', payload)
             existing_en_names.add(norm)
@@ -335,8 +334,7 @@ def main():
                     'ice': matched_zh.get('ice') or c_row.get('ice'),
                     'price': c_row.get('price') or matched_zh.get('price') or menu_match.get('price', ''),
                     'ingredients': matched_zh.get('ingredients') or c_row.get('ingredients'),
-                    'instructions': matched_zh.get('instructions') or c_row.get('instructions'),
-                    'garnish': matched_zh.get('garnish') or c_row.get('garnish')
+                    'instructions': matched_zh.get('instructions') or c_row.get('instructions')
                 }
                 supabase_insert('cocktailsZH', payload_zh)
                 print(f"Re-aligned cocktailsZH ID: {c_name} -> ID {c_id[:8]}...")
@@ -344,7 +342,6 @@ def main():
                 # Translate and insert brand new row
                 glass_zh = translate_safe(c_row.get('glass', ''), 'zh')
                 ice_zh = translate_safe(c_row.get('ice', ''), 'zh')
-                garnish_zh = translate_safe(c_row.get('garnish', ''), 'zh')
                 instr_zh = translate_safe(c_row.get('instructions', ''), 'zh')
 
                 ing_zh = []
@@ -362,8 +359,7 @@ def main():
                     'ice': ice_zh,
                     'price': c_row.get('price') or menu_match.get('price', ''),
                     'ingredients': ing_zh,
-                    'instructions': instr_zh,
-                    'garnish': garnish_zh
+                    'instructions': instr_zh
                 }
                 supabase_insert('cocktailsZH', payload_zh)
                 print(f"Forward synced to cocktailsZH: {c_name} (ID {c_id[:8]}...)")
@@ -389,7 +385,6 @@ def main():
             title_en = translate_safe(zh_name, 'en')
             glass_en = translate_safe(zh_row.get('glass', ''), 'en')
             ice_en = translate_safe(zh_row.get('ice', ''), 'en')
-            garnish_en = translate_safe(zh_row.get('garnish', ''), 'en')
             instr_en = translate_safe(zh_row.get('instructions', ''), 'en')
 
             ing_en = []
@@ -407,8 +402,7 @@ def main():
                 'ice': ice_en,
                 'price': zh_row.get('price', ''),
                 'ingredients': ing_en,
-                'instructions': instr_en,
-                'garnish': garnish_en
+                'instructions': instr_en
             }
             supabase_insert('cocktails', payload_en)
             print(f"Reverse synced to cocktails: {zh_name} (ID {zh_id[:8]}...)")

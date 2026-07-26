@@ -117,7 +117,6 @@ def main():
         if c.get('glass'): unique_texts.add(c['glass'].strip())
         if c.get('ice'): unique_texts.add(c['ice'].strip())
         if c.get('instructions'): unique_texts.add(c['instructions'].strip())
-        if c.get('garnish'): unique_texts.add(c['garnish'].strip())
         ings = c.get('ingredients', [])
         if isinstance(ings, list):
             for ing in ings:
@@ -157,7 +156,6 @@ def main():
         glass_zh = translate_single_text(c.get('glass')) if c.get('glass') else None
         ice_zh = translate_single_text(c.get('ice')) if c.get('ice') else None
         instructions_zh = translate_single_text(c.get('instructions')) if c.get('instructions') else None
-        garnish_zh = translate_single_text(c.get('garnish')) if c.get('garnish') else None
         
         raw_ings = c.get('ingredients', [])
         ingredients_zh = []
@@ -177,8 +175,7 @@ def main():
             'glass': glass_zh,
             'ice': ice_zh,
             'ingredients': ingredients_zh,
-            'instructions': instructions_zh,
-            'garnish': garnish_zh
+            'instructions': instructions_zh
         }
 
         name_key = name.lower()

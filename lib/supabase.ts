@@ -23,7 +23,6 @@ export interface RecipeRow {
   glass?: string;
   ice?: string;
   ingredients: { name: string; amount: string }[];
-  garnish?: string;
   method?: string;
   created_at?: string;
 }

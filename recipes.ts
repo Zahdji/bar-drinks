@@ -1,4 +1,4 @@
-import { supabase, RecipeRow } from './lib/supabase';
+import { supabase } from './lib/supabase';
 
 export interface Ingredient {
   name: string;
@@ -12,7 +12,6 @@ export interface Cocktail {
   ice?: string;
   ingredients: Ingredient[];
   method?: string;
-  garnish?: string;
   created_at?: string;
   category?: string;
   price?: string;
@@ -23,20 +22,10 @@ export const initialRecipes: Cocktail[] = [];
 // Supabase API Helpers
 export async function fetchRecipesFromSupabase(tableName: string = 'cocktails'): Promise<{ data: Cocktail[] | null; error: any }> {
   try {
-    let { data, error } = await supabase
+    const { data, error } = await supabase
       .from(tableName)
       .select('*')
       .order('created_at', { ascending: false });
-
-    if (error && tableName === 'cocktails') {
-      // Fallback to legacy recipes table
-      const fallback = await supabase
-        .from('recipes')
-        .select('*')
-        .order('created_at', { ascending: false });
-      data = fallback.data;
-      error = fallback.error;
-    }
 
     if (error) {
       console.warn(`Supabase fetch error on ${tableName}:`, error.message);
@@ -56,7 +45,6 @@ export async function fetchRecipesFromSupabase(tableName: string = 'cocktails'):
       price: item.price || '',
       ingredients: Array.isArray(item.ingredients) ? item.ingredients : [],
       method: item.instructions || item.method || '',
-      garnish: item.garnish || '',
       created_at: item.created_at
     }));
 
@@ -76,34 +64,14 @@ export async function createRecipeInSupabase(cocktail: Omit<Cocktail, 'id'>, tab
       ice: cocktail.ice,
       price: cocktail.price,
       ingredients: cocktail.ingredients,
-      instructions: cocktail.method,
-      garnish: cocktail.garnish
+      instructions: cocktail.method
     };
 
-    let { data, error } = await supabase
+    const { data, error } = await supabase
       .from(tableName)
       .insert([payload])
       .select('*')
       .single();
-
-    if (error && tableName === 'cocktails') {
-      // Fallback to legacy recipes table
-      const legacyPayload: RecipeRow = {
-        name: cocktail.name,
-        glass: cocktail.glass,
-        ice: cocktail.ice,
-        ingredients: cocktail.ingredients,
-        garnish: cocktail.garnish,
-        method: cocktail.method
-      };
-      const fallback = await supabase
-        .from('recipes')
-        .insert([legacyPayload])
-        .select('*')
-        .single();
-      data = fallback.data;
-      error = fallback.error;
-    }
 
     if (error || !data) return { data: null, error };
 
@@ -116,7 +84,6 @@ export async function createRecipeInSupabase(cocktail: Omit<Cocktail, 'id'>, tab
       price: data.price || '',
       ingredients: Array.isArray(data.ingredients) ? data.ingredients : [],
       method: data.instructions || data.method || '',
-      garnish: data.garnish || '',
       created_at: data.created_at
     };
 
@@ -135,30 +102,12 @@ export async function updateRecipeInSupabase(id: string, cocktail: Partial<Cockt
     if (cocktail.ice !== undefined) payload.ice = cocktail.ice;
     if (cocktail.price !== undefined) payload.price = cocktail.price;
     if (cocktail.ingredients !== undefined) payload.ingredients = cocktail.ingredients;
-    if (cocktail.garnish !== undefined) payload.garnish = cocktail.garnish;
     if (cocktail.method !== undefined) payload.instructions = cocktail.method;
 
-    let { error } = await supabase
+    const { error } = await supabase
       .from(tableName)
       .update(payload)
       .eq('id', id);
-
-    if (error && tableName === 'cocktails') {
-      // Fallback update to legacy recipes table
-      const legacyPayload: Partial<RecipeRow> = {};
-      if (cocktail.name !== undefined) legacyPayload.name = cocktail.name;
-      if (cocktail.glass !== undefined) legacyPayload.glass = cocktail.glass;
-      if (cocktail.ice !== undefined) legacyPayload.ice = cocktail.ice;
-      if (cocktail.ingredients !== undefined) legacyPayload.ingredients = cocktail.ingredients;
-      if (cocktail.garnish !== undefined) legacyPayload.garnish = cocktail.garnish;
-      if (cocktail.method !== undefined) legacyPayload.method = cocktail.method;
-
-      const fallback = await supabase
-        .from('recipes')
-        .update(legacyPayload)
-        .eq('id', id);
-      error = fallback.error;
-    }
 
     return { error };
   } catch (err) {
@@ -168,18 +117,10 @@ export async function updateRecipeInSupabase(id: string, cocktail: Partial<Cockt
 
 export async function deleteRecipeFromSupabase(id: string, tableName: string = 'cocktails'): Promise<{ error: any }> {
   try {
-    let { error } = await supabase
+    const { error } = await supabase
       .from(tableName)
       .delete()
       .eq('id', id);
-
-    if (error && tableName === 'cocktails') {
-      const fallback = await supabase
-        .from('recipes')
-        .delete()
-        .eq('id', id);
-      error = fallback.error;
-    }
 
     return { error };
   } catch (err) {

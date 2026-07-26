@@ -60,7 +60,6 @@ export const i18n = {
     edit: "EDIT",
     ingredients: "INGREDIENTS",
     method: "PREPARATION METHOD",
-    garnish: "GARNISH",
     editSpec: "✏️ EDIT SPEC",
     delete: "🗑️ DELETE",
     addCocktailTitle: "ADD NEW COCKTAIL",
@@ -74,8 +73,6 @@ export const i18n = {
     icePlaceholder: "e.g. Full ice, Crushed, Cubes...",
     priceLabel: "PRICE (NT$)",
     pricePlaceholder: "e.g. 350",
-    garnishLabel: "GARNISH",
-    garnishPlaceholder: "e.g. Lime wedge, Mint sprig...",
     ingredientsLabel: "INGREDIENTS & DOSAGES",
     ingredientNameHeader: "INGREDIENT NAME",
     amountHeader: "AMOUNT",
@@ -119,7 +116,6 @@ export const i18n = {
     edit: "編輯",
     ingredients: "配方原料",
     method: "調製方法",
-    garnish: "裝飾物",
     editSpec: "✏️ 編輯酒單",
     delete: "🗑️ 刪除",
     addCocktailTitle: "新增調酒酒單",
@@ -133,8 +129,6 @@ export const i18n = {
     icePlaceholder: "例如：滿冰、碎冰、去冰...",
     priceLabel: "價格 (NT$)",
     pricePlaceholder: "例如：350",
-    garnishLabel: "裝飾裝扮",
-    garnishPlaceholder: "例如：檸檬角、薄荷葉...",
     ingredientsLabel: "配方成分與用量",
     ingredientNameHeader: "原料名稱",
     amountHeader: "份量/用量",
@@ -238,7 +232,6 @@ export default function App() {
   const [formGlass, setFormGlass] = useState('');
   const [formIce, setFormIce] = useState('');
   const [formPrice, setFormPrice] = useState('');
-  const [formGarnish, setFormGarnish] = useState('');
   const [formMethod, setFormMethod] = useState('');
   const [formIngredients, setFormIngredients] = useState<Ingredient[]>([
     { name: '', amount: '' }
@@ -299,9 +292,8 @@ export default function App() {
     const matchesIce = (recipe.ice || '').toLowerCase().includes(q);
     const matchesPrice = (recipe.price || '').toLowerCase().includes(q) || formatPrice(recipe.price).toLowerCase().includes(q);
     const matchesMethod = (recipe.method || '').toLowerCase().includes(q);
-    const matchesGarnish = (recipe.garnish || '').toLowerCase().includes(q);
 
-    return matchesName || matchesCategory || matchesIngredient || matchesGlass || matchesIce || matchesPrice || matchesMethod || matchesGarnish;
+    return matchesName || matchesCategory || matchesIngredient || matchesGlass || matchesIce || matchesPrice || matchesMethod;
   });
 
   const isIngredientMatch = (ingName: string) => {
@@ -340,7 +332,6 @@ export default function App() {
       setFormGlass(cocktail.glass || '');
       setFormIce(cocktail.ice || '');
       setFormPrice(cocktail.price || '');
-      setFormGarnish(cocktail.garnish || '');
       setFormMethod(cocktail.method || '');
       setFormIngredients(
         cocktail.ingredients.length > 0
@@ -354,7 +345,6 @@ export default function App() {
       setFormGlass('');
       setFormIce('');
       setFormPrice('');
-      setFormGarnish('');
       setFormMethod('');
       setFormIngredients([{ name: '', amount: '' }]);
     }
@@ -401,7 +391,6 @@ export default function App() {
       ice: formIce.trim(),
       price: formPrice.trim(),
       ingredients: cleanIngredients,
-      garnish: formGarnish.trim(),
       method: formMethod.trim()
     };
 
@@ -783,15 +772,7 @@ export default function App() {
                     </View>
                   ) : null}
 
-                  {/* Garnish Section */}
-                  {selectedCocktail.garnish ? (
-                    <View style={styles.section}>
-                      <Text style={styles.sectionHeader}>{t.garnish}</Text>
-                      <View style={styles.garnishBox}>
-                        <Text style={styles.garnishText}>✨ {selectedCocktail.garnish}</Text>
-                      </View>
-                    </View>
-                  ) : null}
+
                 </ScrollView>
 
                 {/* Bottom Quick Actions Bar */}
@@ -932,16 +913,7 @@ export default function App() {
                     </View>
                   </View>
 
-                  <View style={styles.formGroup}>
-                    <Text style={styles.formLabel}>{t.garnishLabel}</Text>
-                    <TextInput
-                      style={styles.formInput}
-                      value={formGarnish}
-                      onChangeText={setFormGarnish}
-                      placeholder={t.garnishPlaceholder}
-                      placeholderTextColor="#666666"
-                    />
-                  </View>
+
 
                   {/* Dynamic Ingredient Input Fields */}
                   <View style={styles.formGroup}>
@@ -1575,16 +1547,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 22
   },
-  garnishBox: {
-    backgroundColor: 'rgba(255, 255, 255, 0.04)',
-    padding: 12,
-    borderRadius: 8
-  },
-  garnishText: {
-    color: '#FFAA00',
-    fontSize: 13,
-    fontWeight: '600'
-  },
+
   modalFooter: {
     flexDirection: 'row',
     gap: 10,
