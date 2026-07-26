@@ -22,6 +22,7 @@ import {
   initialRecipes,
   fetchRecipesFromSupabase,
   createRecipeInSupabase,
+  createCocktailWithTranslation,
   updateRecipeInSupabase,
   deleteRecipeFromSupabase,
   fetchAdminPasscodeFromSupabase
@@ -66,6 +67,8 @@ export const i18n = {
     editCocktailTitle: "EDIT COCKTAIL SPEC",
     cocktailNameLabel: "COCKTAIL NAME *",
     namePlaceholder: "e.g. Espresso Martini",
+    chineseNameLabel: "CHINESE NAME (OPTIONAL)",
+    chineseNamePlaceholder: "e.g. 濃縮咖啡瑪丁尼 (leave blank to default to English name)",
     categoryLabel: "CATEGORY",
     glassLabel: "GLASSWARE",
     glassPlaceholder: "e.g. Highball, Coupette...",
@@ -122,6 +125,8 @@ export const i18n = {
     editCocktailTitle: "編輯調酒酒單",
     cocktailNameLabel: "調酒名稱 *",
     namePlaceholder: "例如：濃縮咖啡瑪丁尼",
+    chineseNameLabel: "中文名稱 (選填)",
+    chineseNamePlaceholder: "例如：濃縮咖啡瑪丁尼 (留空則自動跟隨英文名稱)",
     categoryLabel: "調製分類",
     glassLabel: "適用杯型",
     glassPlaceholder: "例如：高球杯、可口杯...",
@@ -228,6 +233,7 @@ export default function App() {
 
   const [editingRecipeId, setEditingRecipeId] = useState<string | null>(null);
   const [formName, setFormName] = useState('');
+  const [formNameZH, setFormNameZH] = useState('');
   const [formCategory, setFormCategory] = useState('');
   const [formGlass, setFormGlass] = useState('');
   const [formIce, setFormIce] = useState('');
@@ -328,6 +334,7 @@ export default function App() {
     if (cocktail) {
       setEditingRecipeId(cocktail.id);
       setFormName(cocktail.name);
+      setFormNameZH('');
       setFormCategory(cocktail.category || '');
       setFormGlass(cocktail.glass || '');
       setFormIce(cocktail.ice || '');
@@ -341,6 +348,7 @@ export default function App() {
     } else {
       setEditingRecipeId(null);
       setFormName('');
+      setFormNameZH('');
       setFormCategory('');
       setFormGlass('');
       setFormIce('');
@@ -383,41 +391,34 @@ export default function App() {
     );
 
     setSaving(true);
-    const tableName = language === 'zh' ? 'cocktailsZH' : 'cocktails';
-    const payload = {
-      name: formName.trim(),
-      category: formCategory.trim(),
-      glass: formGlass.trim(),
-      ice: formIce.trim(),
-      price: formPrice.trim(),
-      ingredients: cleanIngredients,
-      method: formMethod.trim()
-    };
 
     if (editingRecipeId) {
       // Update in Supabase
-      const { error } = await updateRecipeInSupabase(editingRecipeId, payload, tableName);
-      if (error) {
-        setRecipesList((prev) =>
-          prev.map((item) =>
-            item.id === editingRecipeId ? { ...item, ...payload } : item
-          )
-        );
-      } else {
-        await loadRecipes(language);
-      }
+      const payload = {
+        name: formName.trim(),
+        nameZH: formNameZH.trim(),
+        category: formCategory.trim(),
+        glass: formGlass.trim(),
+        ice: formIce.trim(),
+        price: formPrice.trim(),
+        ingredients: cleanIngredients,
+        method: formMethod.trim()
+      };
+      await updateRecipeInSupabase(editingRecipeId, payload);
+      await loadRecipes(language);
     } else {
-      // Create in Supabase
-      const { data, error } = await createRecipeInSupabase(payload, tableName);
-      if (data) {
-        await loadRecipes(language);
-      } else {
-        const fallbackNew: Cocktail = {
-          id: Date.now().toString(),
-          ...payload
-        };
-        setRecipesList((prev) => [fallbackNew, ...prev]);
-      }
+      // Create in Supabase with auto-translation and 1:1 dual table seeding
+      await createCocktailWithTranslation({
+        name: formName.trim(),
+        nameZH: formNameZH.trim(),
+        category: formCategory.trim(),
+        glass: formGlass.trim(),
+        ice: formIce.trim(),
+        price: formPrice.trim(),
+        ingredients: cleanIngredients,
+        method: formMethod.trim()
+      });
+      await loadRecipes(language);
     }
 
     setSaving(false);
@@ -836,6 +837,17 @@ export default function App() {
                       value={formName}
                       onChangeText={setFormName}
                       placeholder={t.namePlaceholder}
+                      placeholderTextColor="#666666"
+                    />
+                  </View>
+
+                  <View style={styles.formGroup}>
+                    <Text style={styles.formLabel}>{t.chineseNameLabel}</Text>
+                    <TextInput
+                      style={styles.formInput}
+                      value={formNameZH}
+                      onChangeText={setFormNameZH}
+                      placeholder={t.chineseNamePlaceholder}
                       placeholderTextColor="#666666"
                     />
                   </View>
